@@ -22,6 +22,7 @@
   "dependencies": {
     "bcryptjs": "2.1.0",
     "bluebird": "^3.5.0",
+    "connect": "^3.6.5",
     "connect-mongo": "0.8.1",
     "dj-dps-commands": "boldak/dj-dps-commands",
     "dj-dps-interpreter": "boldak/dj-dps-interpreter#dev",
