@@ -4,11 +4,15 @@ module.exports = [
 	require("./lookup"),
 	require("./translate"),
 	require("./cache"),
-	require("./definition"),
+	// require("./definition"),
 	require("./dm/create"),
 	require("./dm/select"),
 	require("./dm/update"),
-	require("./dm/delete")
+	require("./dm/delete"),
+	require("./ddl/description"),
+	require("./ddl/create"),
+	require("./ddl/alter"),
+	require("./ddl/drop")
 	// ,require("./newmodel")
 
 

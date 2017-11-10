@@ -1,1 +1,0 @@
-module.exports = {"attributes":{"model":"string","properties":"array"}}

@@ -11,7 +11,13 @@ var dmSelectImplError = function(message) {
 dmSelectImplError.prototype = Object.create(Error.prototype);
 dmSelectImplError.prototype.constructor = dmSelectImplError;
 
-
+var getModelAssociations = (model) => {
+        let res = [];
+        for(key in model.definition){
+            if(model.attributes[key].model) res.push(key)
+        }
+        return res;
+}
 
 var impl = function(params){
 	return new Promise(function(resolve,reject){
@@ -27,8 +33,13 @@ var impl = function(params){
             reject(new dmSelectImplError("Entity collection '" + model + "' is not available"))
          
         if(params.ref){
-            sails.models[params.ref.collection].find(params.ref.filter)
-                .then((founded) =>{
+            let ctx = sails
+                .models[params.ref.collection]
+                .find(params.ref.filter)
+            
+            params.populate.forEach(key => ctx = ctx.populate(key))
+            
+            ctx.then((founded) => {
                     try{
                         resolve(founded.map((item) => getProperty(item, params.ref.path)))    
                     }catch (e) {
@@ -65,7 +76,8 @@ module.exports =  {
         "path": "path",
         "where": "path",
 
-        "ref":"ref"
+        "ref":"ref",
+        "populate": "populate"
     },
     
     defaultProperty: {
@@ -87,10 +99,18 @@ module.exports =  {
             if(command.settings.ref){
                 try {
                     command.settings.ref = parseRef(command.settings.ref)
+                    command.settings.collection = command.settings.ref.collection
                 } catch (e) {
                     reject( new dmSelectImplError(e) )
                 }    
             }
+
+            command.settings.populate = (command.settings.populate)
+                                            ? (command.settings.populate == "*")
+                                                ? getModelAssociations(sails.models[command.settings.collection])
+                                                : command.settings.populate.split(",").map(item => item.trim())
+                                            : [];    
+
 
             impl(command.settings)
                 .then(function(result) {
