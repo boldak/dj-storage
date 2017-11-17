@@ -10,18 +10,25 @@
  *
  */
 
+
+
 module.exports = {
 
   /***************************************************************************
    * Set the default database connection for models in the development       *
    * environment (see config/connections.js and config/models.js )           *
    ***************************************************************************/
-  port: process.env.PORT || 8088,
+  port: process.env.PORT || 8098,
   hookTimeout: 40000,
 
   // models: {
   //   connection: 'someMongodbServer'
   // }
+  
+  session:{
+    url: "mongodb://127.0.0.1:27017/dj-sessions"
+  },
+  
 
   level: process.env.SAILS_LOG_LEVEL || "info"
 };

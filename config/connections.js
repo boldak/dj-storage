@@ -63,7 +63,7 @@ module.exports.connections = {
     url: process.env.MONGOLAB_URI || process.env.MONGODB_URL,
     // user: 'username',
     // password: 'password',
-    database: 'dj'
+    database: 'dj-storage'
   },
 
   /***************************************************************************
