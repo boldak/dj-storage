@@ -11,20 +11,24 @@ class DDLCreateImplError extends Error {
 module.exports = {
     name: "ddl.create",
     synonims: {
-        "ddl.create":"ddl.create",
-        "ddl.entity":"ddl.create"
+        "ddl.create":"ddl.create"
     },
 
     "internal aliases":{
         "model":"model",
         "for":"model",
         "entity":"model",
-        "collection":"model"
+        "collection":"model",
+        "schema":"schema",
+        "as": "model",
+        "type": "name"
     },
 
+    // ddl.create(type: "user", as:{{schema}})
+    // ddl.create(type: "user", schema:{{schema}})
+
     defaultProperty: {
-        "ddl.create":"model",
-        "ddl.entity":"model"
+        "ddl.create":"schema"
     },
 
    

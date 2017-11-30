@@ -12,7 +12,8 @@ module.exports = [
 	require("./ddl/description"),
 	require("./ddl/create"),
 	require("./ddl/alter"),
-	require("./ddl/drop")
+	require("./ddl/drop"),
+	require("./echo")
 	// ,require("./newmodel")
 
 

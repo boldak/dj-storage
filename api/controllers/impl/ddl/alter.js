@@ -19,12 +19,15 @@ module.exports = {
         "model":"model",
         "for":"model",
         "entity":"model",
-        "collection":"model"
+        "collection":"model",
+        "schema":"model",
+        "as": "model",
+        "type": "name"
     },
 
     defaultProperty: {
-        "ddl.create":"model",
-        "ddl.entity":"model"
+        "ddl.alter":"model",
+        "ddl.modify":"model"
     },
 
    
@@ -43,24 +46,26 @@ module.exports = {
                                 `module.exports = ${JSON.stringify(command.settings.model)}`
                             );
                     try {
-                        Entities.create({
-                            name: command.settings.name,
-                            schema: command.settings.model
-                        }).then((res) => {
-                            try {
-                                sails.hooks.orm.reload()
-                                state.head = {
-                                    data: res,
-                                    type: "json"
-                                 }
-                                sails.once("hook:orm:reloaded", () => {
-                                    console.log("alter:hook:orm:reloaded")  
-                                  resolve(state);
-                                })        
-                            } catch (e) {
-                                reject(new DDLAlterImplError(e.toString())) 
-                            }                
-                        })             
+                        Entities.update(
+                            {name: command.settings.name},
+                            {
+                                name: command.settings.name,
+                                schema: command.settings.model
+                            }).then((res) => {
+                                try {
+                                    sails.hooks.orm.reload()
+                                    state.head = {
+                                        data: res,
+                                        type: "json"
+                                     }
+                                    sails.once("hook:orm:reloaded", () => {
+                                        console.log("alter:hook:orm:reloaded")  
+                                      resolve(state);
+                                    })        
+                                } catch (e) {
+                                    reject(new DDLAlterImplError(e.toString())) 
+                                }                
+                            })             
                     } catch (e) {
                         reject(new DDLAlterImplError(e.toString())) 
                     }        

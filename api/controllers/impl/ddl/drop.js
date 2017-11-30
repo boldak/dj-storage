@@ -20,7 +20,8 @@ module.exports = {
         "model":"model",
         "for":"model",
         "entity":"model",
-        "collection":"model"
+        "collection":"model",
+        "type":"model"
     },
 
     defaultProperty: {
@@ -88,6 +89,5 @@ module.exports = {
             description: "Get Definition for All Stored Collections",
             code: "def()"
         }
-
     }
 }
