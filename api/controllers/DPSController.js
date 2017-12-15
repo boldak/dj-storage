@@ -5,21 +5,21 @@ var Script = require("dj-dps-interpreter");
 
 var logger = require("dj-utils").log.global;
 
-logger.debug("Start DPS Service")
+logger.debug("Start DJ Storage Service")
 
 module.exports = {
 
     run: function(req, resp) {
 
         var script = req.body.script;
-        
         var state = req.body.state;
-        
-      
         var locale = req.body.locale || "en";
         locale = (locale == "uk") ? "ua" : locale;
 
-        state = (state) || {locale : locale}
+        state = (state) || {
+            locale : locale, 
+            client: req.body.client
+        }
         // console.log(req.host, script, state)
         var executable = new Script()
             .host(req.host)

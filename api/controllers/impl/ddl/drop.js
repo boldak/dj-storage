@@ -1,6 +1,7 @@
 var fs = require('fs');
 var Promise = require("bluebird");
 var del = require("del");
+var util = require("util");
 
 class DDLDropImplError extends Error {
   constructor(message) {
@@ -33,6 +34,40 @@ module.exports = {
 
     execute: function(command, state) {
         return new Promise((resolve, reject) => {
+            command.settings = command.settings || {}
+
+            if(util.isUndefined(command.settings.model)){
+                Entities.destroy({})
+                    .then((res) => {
+                        if (!res) {
+                             state.head = {
+                                        data: res[0],
+                                        type: "json"
+                                     }
+                            resolve(state)
+                            return 
+                        }
+
+                        Promise.all(
+                            res.map((model) => {
+                                del(`./api/models/${model.name}.js`)
+                            })
+                        )
+                        .then(() => {
+                            state.head = {
+                                        data: {},
+                                        type: "json"
+                                     }
+                            resolve(state)    
+                        })    
+                        return             
+                    })
+                    .catch((e) => {
+                        reject (new DDLDropImplError(e.toString()))
+                    })
+            } else {
+            
+
             Entities
                 .findOne({name:command.settings.model.toLowerCase()})
                 .then((col) => {
@@ -65,7 +100,10 @@ module.exports = {
                         }    
                     })
                     .catch (e =>  reject (new DDLDropError(e.toString())))
-                })         
+                }) 
+
+
+            }            
         })
     },
 

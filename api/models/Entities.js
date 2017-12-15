@@ -1,12 +1,20 @@
 module.exports = {
   attributes: {
+    schema: {
+      type: 'string',
+      required: true,
+      unique: true,
+      primaryKey: true
+    },
+    
     name: {
       type: 'string',
       required: true,
       unique: true,
       primaryKey: true
     },
-    schema: {
+    
+    model: {
       type: 'json',
       required: true
     }

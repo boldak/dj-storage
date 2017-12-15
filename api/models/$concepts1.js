@@ -1,1 +1,0 @@
-module.exports = {"schema":true,"attributes":{"id":{"type":"integer","autoIncrement":true,"primaryKey":true,"unique":true},"author":{"model":"User"},"developer":{"model":"User"},"manager":{"model":"User"},"script":{"type":"string"}}}
