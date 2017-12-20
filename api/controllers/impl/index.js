@@ -5,10 +5,10 @@ module.exports = [
 	require("./translate"),
 	require("./cache"),
 	// require("./definition"),
-	require("./dm/create"),
-	require("./dm/select"),
-	require("./dm/update"),
-	require("./dm/delete"),
+	// require("./dm/create"),
+	// require("./dm/select"),
+	// require("./dm/update"),
+	// require("./dm/delete"),
 	require("./ddl/description"),
 	require("./ddl/create"),
 	require("./ddl/alter"),
@@ -17,4 +17,4 @@ module.exports = [
 	// ,require("./newmodel")
 
 
-]
+].concat(require("./dml"))

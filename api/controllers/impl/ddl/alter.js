@@ -1,5 +1,7 @@
 var fs = require('fs');
 var Promise = require("bluebird");
+var util = require("util");
+
 
 class DDLAlterImplError extends Error {
   constructor(message) {
@@ -11,68 +13,117 @@ class DDLAlterImplError extends Error {
 module.exports = {
     name: "ddl.alter",
     synonims: {
-        "ddl.alter":"ddl.alter",
-        "ddl.modify":"ddl.alter"
+        "ddl.alter": "ddl.alter",
+        "ddl.modify": "ddl.alter"
     },
 
     "internal aliases":{
         "model":"model",
-        "for":"model",
         "entity":"model",
         "collection":"model",
-        "schema":"model",
-        "as": "model",
-        "type": "name"
+        "schema":"schema"
     },
 
+    // ddl.create(type: "user", as:{{schema}})
+    // ddl.create(type: "user", schema:{{schema}})
+
     defaultProperty: {
-        "ddl.alter":"model",
-        "ddl.modify":"model"
+        "ddl.alter":"schema",
+        "ddl.modify": "schema"
     },
 
    
 
     execute: function(command, state) {
         return new Promise((resolve, reject) => {
-            Entities
-                .findOne({name:command.settings.name.toLowerCase()})
-                .then((col) => {
-                    if (!col){
-                        reject(new DDLAlterImplError(`Collection '${command.settings.name}' not found`))
-                        return
+
+            command.settings = command.settings || {};
+            
+            if(command.settings.model){
+                command.settings.model = (util.isArray(command.settings.model)) ? command.settings.model : [command.settings.model];
+                let errorDetected = false;
+                command.settings.model.forEach((item) => {
+                    if (!item.identity){ 
+                        reject(new DDLAlterImplError(`Identity for collection ${JSON.stringify(item)} is undefined.`));
+                        errorDetected = true;
+                    }    
+                    if (!item.attributes) {
+                        reject(new DDLAlterImplError(`Type of collection ${JSON.stringify(item)} is undefined.`));
+                        errorDetected = true;
+                    }       
+                })
+                if(errorDetected) return
+            }        
+
+            if (command.settings.schema && !command.settings.schema.identity) reject(new DDLAlterImplError(`Schema identity for ${JSON.stringify(command.settings.schema.entities)} is undefined.`))      
+            if (command.settings.schema && !command.settings.schema.entities) reject(new DDLAlterImplError(`Entities description for schema ${command.settings.schema.identity} is undefined.`))      
+            
+            let models = [];
+
+            if (command.settings.schema){
+                for(let [identity, model] of Object.entries(command.settings.schema.entities)) {
+                    models.push({
+                       identity:identity,
+                       schema: command.settings.schema.identity,
+                       model: model,
+                       owner: state.client 
+                    })
+                }
+            }else if (command.settings.model){
+                
+                models = command.settings.model.map((item) => {
+                    return {
+                        schema:item.schema ||"GLOBAL",
+                        identity: item.identity,
+                        model: {attributes: item.attributes},
+                        owner: state.client 
                     }
+                })
+            }
 
-                    fs.writeFileSync(   `./api/models/${command.settings.name}.js`, 
-                                `module.exports = ${JSON.stringify(command.settings.model)}`
-                            );
-                    try {
-                        Entities.update(
-                            {name: command.settings.name},
-                            {
-                                name: command.settings.name,
-                                schema: command.settings.model
-                            }).then((res) => {
-                                try {
-                                    sails.hooks.orm.reload()
-                                    state.head = {
-                                        data: res,
-                                        type: "json"
-                                     }
-                                    sails.once("hook:orm:reloaded", () => {
-                                        console.log("alter:hook:orm:reloaded")  
-                                      resolve(state);
-                                    })        
-                                } catch (e) {
-                                    reject(new DDLAlterImplError(e.toString())) 
-                                }                
-                            })             
-                    } catch (e) {
-                        reject(new DDLAlterImplError(e.toString())) 
-                    }        
-                })         
+            Promise.all( models.map((model) => {
+                return new Promise((resolve,reject) =>{
+                        Entities
+                        .findOne({identity:model.identity.toLowerCase()})
+                        .then((col) => {
+                            // if (col){
+                            //     reject(new DDLCreateImplError(`Doublicate '${model.identity}' collection`))
+                            //     return
+                            // }
+
+                            fs.writeFileSync(   `./api/models/${model.identity}.js`, 
+                                        `module.exports = ${JSON.stringify(model.model)}`
+                                    );
+
+                            Entities
+                                .update({identity:model.identity}, model)
+                                .then((res) => {
+                                    resolve(res)
+                                })
+                                .catch((e) => {
+                                    reject (new DDLAlterImplError(e.toString()))
+                                })
+                        })
+                    })
+                })
+            )
+            .then(() => {
+                state.head = {
+                    data: models,
+                    type: "json"
+                }
+                require("./ddl-utils")
+                    .reloadORM(sails)
+                    .then(() => { resolve(state) })
+                    .catch((e) => { reject(new DDLAlterImplError(e.toString()))})
+            })
+            .catch((e) => {
+                reject(new DDLAlterImplError(e.toString())) 
+            })
         })
-    },
-
+    },    
+            
+    
     help: {
         synopsis: "Create new entity collection",
         name: {

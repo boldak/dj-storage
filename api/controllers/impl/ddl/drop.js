@@ -1,4 +1,4 @@
-var fs = require('fs');
+// var fs = require('fs');
 var Promise = require("bluebird");
 var del = require("del");
 var util = require("util");
@@ -19,93 +19,55 @@ module.exports = {
 
     "internal aliases":{
         "model":"model",
-        "for":"model",
         "entity":"model",
         "collection":"model",
-        "type":"model"
+        "schema": "schema"
     },
 
     defaultProperty: {
-        "ddl.drop":"model",
-        "ddl.destroy":"model"
+        "ddl.drop":"schema",
+        "ddl.destroy":"schema"
     },
 
-   
 
     execute: function(command, state) {
-        return new Promise((resolve, reject) => {
-            command.settings = command.settings || {}
 
-            if(util.isUndefined(command.settings.model)){
-                Entities.destroy({})
+        return new Promise(function(resolve, reject) {
+            let criteria = {}
+            if (command.settings.model) criteria.identity = command.settings.model;
+            if (command.settings.schema) criteria.schema = command.settings.schema;
+            Entities.find(criteria)
                     .then((res) => {
-                        if (!res) {
-                             state.head = {
-                                        data: res[0],
-                                        type: "json"
-                                     }
-                            resolve(state)
-                            return 
+                        if (res.length == 0 ) reject(new DDLDropImplError(`Cannot find '${JSON.stringify(criteria)}'`))
+                        state.head = {
+                            data: res,
+                            type: "json"
                         }
-
-                        Promise.all(
-                            res.map((model) => {
-                                del(`./api/models/${model.name}.js`)
-                            })
-                        )
-                        .then(() => {
-                            state.head = {
-                                        data: {},
-                                        type: "json"
-                                     }
-                            resolve(state)    
-                        })    
-                        return             
-                    })
-                    .catch((e) => {
-                        reject (new DDLDropImplError(e.toString()))
-                    })
-            } else {
-            
-
-            Entities
-                .findOne({name:command.settings.model.toLowerCase()})
-                .then((col) => {
-                    if (!col){
-                        reject(new DDLDropImplError(`Collection '${command.settings.model}' not found`))
-                        return
-                    }
-
-                    del(`./api/models/${command.settings.model}.js`)
-                    .then (() => {
-                        try {
-                            Entities.destroy({name: command.settings.model})
-                            .then((res) => {
-                                try {
-                                    sails.hooks.orm.reload();
-                                    state.head = {
-                                                data: res,
-                                                type: "json"
-                                             }
-                                    sails.once("hook:orm:reloaded", () => {
-                                      console.log("drop:hook:orm:reloaded")  
-                                      resolve(state);
+                        Entities
+                            .destroy(criteria)
+                            .then(() => {
+                                Promise
+                                    .all(res.map((item) => {
+                                        return new Promise( (resolve,reject) => { 
+                                                    del(`./api/models/${item.identity}.js`)
+                                                        .then (() => { resolve(`./api/models/${item.identity}.js`)})
+                                                        .catch((e) => { reject(new DDLDropImplError(e.toString()))})
+                                                })
+                                    }))
+                                    .then (() => {
+                                        require("./ddl-utils")
+                                            .reloadORM(sails)
+                                            .then(() => { resolve(state) })
+                                            .catch((e) => { reject(new DDLDropImplError(e.toString()))})
                                     })
-                                } catch (e) {
-                                    reject(new DDLDropImplError(e.toString())) 
-                                }                
-                            })             
-                        } catch (e) {
-                            reject(new DDLDropImplError(e.toString())) 
-                        }    
+                                    .catch((e) => { reject(new DDLDropImplError(e.toString()))})    
+                            })
+                            .catch((e) => { reject(new DDLDropImplError(e.toString()))})
                     })
-                    .catch (e =>  reject (new DDLDropError(e.toString())))
-                }) 
+                    .catch((e) => { reject(new DDLDropImplError(e.toString()))})
+        })            
+    },        
 
-
-            }            
-        })
-    },
 
     help: {
         synopsis: "Create new entity collection",

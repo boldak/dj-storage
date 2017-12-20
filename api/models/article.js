@@ -1,0 +1,1 @@
+module.exports = {"attributes":{"title":{"type":"string"},"brief":{"type":"string"}}}

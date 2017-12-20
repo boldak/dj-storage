@@ -7,7 +7,7 @@ module.exports = {
       primaryKey: true
     },
     
-    name: {
+    identity: {
       type: 'string',
       required: true,
       unique: true,
@@ -17,6 +17,12 @@ module.exports = {
     model: {
       type: 'json',
       required: true
+    },
+
+    owner:{
+      type: 'json',
+      required: true
     }
+    
   }
 };
