@@ -1,7 +1,7 @@
 
 let Promise = require("bluebird");
-let util = require("util")
-
+let util = require("util");
+let storageUtils = require("../utils");
 
 class DMLUpdateImplError extends Error {
     constructor(message) {
@@ -12,25 +12,29 @@ class DMLUpdateImplError extends Error {
 
 
 
-var impl = (params)  => {
+var impl = (params, state)  => {
 	return new Promise( (resolve, reject) => {
-        let collection = sails.models[params.collection]
-        let filterDB = (util.isFunction(params.where)) ? {} : params.where;
-        let filterC = (util.isFunction(params.where)) ? params.where : ((item) => true);
-            collection
-                .find(filterDB)
-                .then((founded) => {
-                    Promise.all(
-                        founded
-                            .filter(filterC)
-                            .map((item,index) => collection.update({id:item.id}, params.as(item,index)))
-                    )
-                    .then((res) => {
-                        resolve(res)
-                    })
-                    .catch((e) => {reject(new DMLUpdateImplError(e.toString()))})
-                })
-                .catch((e) => {reject(new DMLUpdateImplError(e.toString()))})
+        storageUtils.access(state.client, params.collection, 'update' )
+            .then(() => {
+                let collection = sails.models[params.collection]
+                let filterDB = (util.isFunction(params.where)) ? {} : params.where;
+                let filterC = (util.isFunction(params.where)) ? params.where : ((item) => true);
+                    collection
+                        .find(filterDB)
+                        .then((founded) => {
+                            Promise.all(
+                                founded
+                                    .filter(filterC)
+                                    .map((item,index) => collection.update({id:item.id}, params.as(item,index)))
+                            )
+                            .then((res) => {
+                                resolve(res)
+                            })
+                            .catch((e) => {reject(new DMLUpdateImplError(e.toString()))})
+                        })
+                        .catch((e) => {reject(new DMLUpdateImplError(e.toString()))})
+            })
+            .catch((e) => {reject(new DMLUpdateImplError(e.toString()))})
   	})
 }
 
@@ -72,7 +76,7 @@ module.exports =  {
 
             command.settings.as = command.settings.as || ((item,index) => item); 
 
-            impl(command.settings)
+            impl(command.settings, state)
                 .then(function(result) {
                     state.head = {
                         type: "json",

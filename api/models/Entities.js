@@ -22,6 +22,10 @@ module.exports = {
     owner:{
       type: 'json',
       required: true
+    },
+
+    permissions: {
+      type: 'json'
     }
     
   }

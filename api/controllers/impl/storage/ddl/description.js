@@ -39,7 +39,7 @@ module.exports = {
 
         return new Promise(function(resolve, reject) {
             let criteria = {}
-            if (command.settings.model) criteria.name = command.settings.model;
+            if (command.settings.model) criteria.identity = command.settings.model;
             if (command.settings.schema) criteria.schema = command.settings.schema;
 
             Entities.find(criteria)

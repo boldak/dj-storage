@@ -1,9 +1,10 @@
 
-// var Promise = require("bluebird");
-var jp = require("jsonpath");
-var parseRef = require("dj-utils").reference.parse;
-var getProperty = require("dj-utils").getProperty;
-var util = require("util");
+let Promise = require("bluebird");
+let jp = require("jsonpath");
+let parseRef = require("dj-utils").reference.parse;
+let getProperty = require("dj-utils").getProperty;
+let util = require("util");
+let storageUtils = require("../utils");
 
 class DMLSelectImplError extends Error {
   constructor(message) {
@@ -21,11 +22,11 @@ var getModelAssociations = (model) => {
         return res;
 }
 
-var impl = function(params){
+var impl = function(params, state){
 	return new Promise(function(resolve,reject){
         
         if(!params.collection){
-                reject(new DMLDeleteImplError("Entity collection is undefined"))
+                reject(new DMLSelectImplError("Entity collection is undefined"))
                 return
         }
         
@@ -34,53 +35,55 @@ var impl = function(params){
             model = params.ref.collection;
         }    
         
+        storageUtils.access(state.client, model, 'select')
+            .then(() => {
+                if(!sails.models[model]){
+                    reject(new DMLSelectImplError("Entity collection '" + model + "' is not available"))
+                    return
+                }
+                if(typeof sails.models[model] != "object"){
+                    reject(new DMLSelectImplError("Entity collection '" + model + "' is not available"))
+                    return
+                }
+                 
+                if(params.ref){
+                    let ctx = sails
+                        .models[params.ref.collection]
+                        .find(params.ref.filter)
+                    
+                    params.populate.forEach(key => ctx = ctx.populate(key))
+                    
+                    ctx.then((founded) => {
+                            try{
+                                resolve(founded.map((item) => getProperty(item, params.ref.path)))    
+                            }catch (e) {
+                                reject (new DMLSelectImplError(e.toString()))
+                            }
+                        })
+                } else {
 
-
-        if(!sails.models[model]){
-            reject(new DMLSelectImplError("Entity collection '" + model + "' is not available"))
-            return
-        }
-        if(typeof sails.models[model] != "object"){
-            reject(new DMLSelectImplError("Entity collection '" + model + "' is not available"))
-            return
-        }
-         
-        if(params.ref){
-            let ctx = sails
-                .models[params.ref.collection]
-                .find(params.ref.filter)
-            
-            params.populate.forEach(key => ctx = ctx.populate(key))
-            
-            ctx.then((founded) => {
-                    try{
-                        resolve(founded.map((item) => getProperty(item, params.ref.path)))    
-                    }catch (e) {
-                        reject (new DMLSelectImplError(e.toString()))
-                    }
-                })
-        } else {
-
-            // console.log("Load all data")
-            let ctx = sails.models[params.collection].find({});
-            params.populate.forEach(key => ctx = ctx.populate(key));
-            ctx.then((founded) =>{
-                    try{
-                        // console.log(founded)
-                        if(util.isFunction(params.path)){
-                            let data =  founded.filter(params.path).map(params.map);
-                            // console.log(data)
-                            resolve(data)
-                        } else {
-                            let data = jp.query(founded,params.path).map(params.map);
-                            // console.log(data)
-                            resolve(jp.query(founded,params.path).map(params.map))    
-                        }
-                    }catch (e) {
-                        reject (new DMLSelectImplError(e.toString()))
-                    }
-                })
-        }        
+                    // console.log("Load all data")
+                    let ctx = sails.models[params.collection].find({});
+                    params.populate.forEach(key => ctx = ctx.populate(key));
+                    ctx.then((founded) =>{
+                            try{
+                                // console.log(founded)
+                                if(util.isFunction(params.path)){
+                                    let data =  founded.filter(params.path).map(params.map);
+                                    // console.log(data)
+                                    resolve(data)
+                                } else {
+                                    let data = jp.query(founded,params.path).map(params.map);
+                                    // console.log(data)
+                                    resolve(jp.query(founded,params.path).map(params.map))    
+                                }
+                            }catch (e) {
+                                reject (new DMLSelectImplError(e.toString()))
+                            }
+                        })
+                }        
+            })
+            .catch((e) => { reject(new DMLSelectImplError(e.toString()))})
     })
 }
 
@@ -143,7 +146,7 @@ module.exports =  {
             // console.log("settings with default")
             // console.log(command.settings)
 
-            impl(command.settings)
+            impl(command.settings, state)
                 .then(function(result) {
                     state.head = {
                         type: "json",

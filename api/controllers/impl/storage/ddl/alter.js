@@ -1,6 +1,8 @@
 var fs = require('fs');
 var Promise = require("bluebird");
 var util = require("util");
+let storageUtils = require("../utils");
+
 
 
 class DDLAlterImplError extends Error {
@@ -66,7 +68,8 @@ module.exports = {
                        identity:identity,
                        schema: command.settings.schema.identity,
                        model: model,
-                       owner: state.client 
+                       owner: state.client,
+                       permissions: command.settings.schema.permissions || model.permissions
                     })
                 }
             }else if (command.settings.model){
@@ -76,34 +79,42 @@ module.exports = {
                         schema:item.schema ||"GLOBAL",
                         identity: item.identity,
                         model: {attributes: item.attributes},
-                        owner: state.client 
+                        owner: state.client,
+                        permissions: item.permissions
                     }
                 })
             }
 
             Promise.all( models.map((model) => {
-                return new Promise((resolve,reject) =>{
-                        Entities
-                        .findOne({identity:model.identity.toLowerCase()})
-                        .then((col) => {
-                            // if (col){
-                            //     reject(new DDLCreateImplError(`Doublicate '${model.identity}' collection`))
-                            //     return
-                            // }
-
-                            fs.writeFileSync(   `./api/models/${model.identity}.js`, 
-                                        `module.exports = ${JSON.stringify(model.model)}`
-                                    );
-
+                return new Promise((resolve,reject) => {
+                        storageUtils.access(state.client, model.identity.toLowerCase(), "alter")
+                        .then(() => {
                             Entities
-                                .update({identity:model.identity}, model)
-                                .then((res) => {
-                                    resolve(res)
-                                })
-                                .catch((e) => {
-                                    reject (new DDLAlterImplError(e.toString()))
-                                })
+                                .findOne({identity:model.identity.toLowerCase()})
+                                .then((col) => {
+                                    // if (col){
+                                    //     reject(new DDLCreateImplError(`Doublicate '${model.identity}' collection`))
+                                    //     return
+                                    // }
+
+                                    fs.writeFileSync(   `./api/models/${model.identity}.js`, 
+                                                `module.exports = ${JSON.stringify(model.model)}`
+                                            );
+
+                                    Entities
+                                        .update({identity:model.identity}, model)
+                                        .then((res) => {
+                                            resolve(res)
+                                        })
+                                        .catch((e) => {
+                                            reject (new DDLAlterImplError(e.toString()))
+                                        })
+                                })    
                         })
+                        .catch((e) => {
+                            reject (new DDLAlterImplError(e.toString()))
+                        })
+                        
                     })
                 })
             )
@@ -112,7 +123,8 @@ module.exports = {
                     data: models,
                     type: "json"
                 }
-                require("./ddl-utils")
+                require("../utils")
+                storageUtils
                     .reloadORM(sails)
                     .then(() => { resolve(state) })
                     .catch((e) => { reject(new DDLAlterImplError(e.toString()))})

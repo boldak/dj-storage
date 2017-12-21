@@ -1,6 +1,8 @@
 var fs = require('fs');
 var Promise = require("bluebird");
 var util = require("util");
+let storageUtils = require("../utils");
+
 
 
 class DDLCreateImplError extends Error {
@@ -64,7 +66,8 @@ module.exports = {
                        identity:identity,
                        schema: command.settings.schema.identity,
                        model: model,
-                       owner: state.client 
+                       owner: state.client,
+                       permissions: command.settings.schema.permissions || model.permissions 
                     })
                 }
             }else if (command.settings.model){
@@ -74,7 +77,8 @@ module.exports = {
                         schema:item.schema ||"GLOBAL",
                         identity: item.identity,
                         model: {attributes: item.attributes},
-                        owner: state.client 
+                        owner: state.client,
+                        permissions: item.permissions 
                     }
                 })
             }
@@ -110,7 +114,7 @@ module.exports = {
                     data: models,
                     type: "json"
                 }
-                require("./ddl-utils")
+                storageUtils
                     .reloadORM(sails)
                     .then(() => { resolve(state) })
                     .catch((e) => { reject(new DDLCreateImplError(e.toString()))})

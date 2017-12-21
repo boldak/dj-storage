@@ -1,1 +1,1 @@
-module.exports = {"attributes":{"title":{"type":"string"},"brief":{"type":"string"},"note":{"type":"string"}}}
+module.exports = {"attributes":{"title":{"type":"string"},"brief":{"type":"string"}}}

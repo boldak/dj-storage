@@ -1,5 +1,5 @@
-// var Promise = require("bluebird");
-
+let Promise = require("bluebird");
+let storageUtils = require("../utils");
 
 
 class DMLInsertImplError extends Error {
@@ -11,10 +11,14 @@ class DMLInsertImplError extends Error {
 
 
 
-var impl = function(params) {
+var impl = function(params, state) {
     return new Promise(function(resolve, reject) {
-        var collection = sails.models[params.collection]
-        resolve(sails.models[params.collection].create(params.values))
+        storageUtils.access(state.client, params.collection, 'insert')
+        .then(() => {
+            var collection = sails.models[params.collection]
+            resolve(sails.models[params.collection].create(params.values))    
+        })
+        .catch((e) => { reject(new DMLInsertImplError(e.toString()))})
     })
 }
 
@@ -57,7 +61,7 @@ module.exports = {
 
             command.settings.values = (util.isArray(command.settings.values)) ? command.settings.values : [command.settings.values]
 
-            impl(command.settings)
+            impl(command.settings, state)
                 .then(function(result) {
                     state.head = {
                         type: "json",

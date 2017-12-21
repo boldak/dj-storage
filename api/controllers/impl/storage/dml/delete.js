@@ -1,6 +1,7 @@
 
 let Promise = require("bluebird");
 let util = require("util")
+let storageUtils = require("../utils");
 
 class DMLDeleteImplError extends Error {
     constructor(message) {
@@ -11,22 +12,26 @@ class DMLDeleteImplError extends Error {
 
 
 
-var impl = function(params){
+var impl = function(params, state){
 	return new Promise(function(resolve,reject){
-        var collection = sails.models[params.collection]
-        if(util.isFunction(params.criteria)){
-            collection
-                .find({})
-                .then((founded) => {
-                    resolve( Promise.all(
-                        founded.filter(params.criteria).map((item) => collection.destroy({id:item.id}))
-                    ))
-                })
-                .catch((e) => {reject(new DMLDeleteImplError(e.toString()))})
+        storageUtils.access(state.client, params.collection, 'delete')
+            .then(()=>{
+                var collection = sails.models[params.collection]
+                if(util.isFunction(params.criteria)){
+                    collection
+                        .find({})
+                        .then((founded) => {
+                            resolve( Promise.all(
+                                founded.filter(params.criteria).map((item) => collection.destroy({id:item.id}))
+                            ))
+                        })
+                        .catch((e) => {reject(new DMLDeleteImplError(e.toString()))})
 
-        } else {
-            resolve(collection.destroy(params.criteria))    
-        }
+                } else {
+                    resolve(collection.destroy(params.criteria))    
+                }        
+            })
+            .catch((e) => {reject(new DMLDeleteImplError(e.toString()))})
   	})
 }
 
@@ -63,7 +68,7 @@ module.exports =  {
             
             command.settings.criteria = command.settings.where || {}
 
-            impl(command.settings)
+            impl(command.settings, state)
                 .then(function(result) {
                     state.head = {
                         type: "json",
