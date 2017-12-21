@@ -16,4 +16,4 @@ module.exports = [
 	require("./echo")
 	// ,require("./newmodel")
 ]
-.concat(require("./storage"))
+// .concat(require("./storage"))
