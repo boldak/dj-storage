@@ -28,6 +28,7 @@
     "dj-dps-interpreter": "boldak/dj-dps-interpreter#dev",
     "dj-utils": "boldak/dj-utils#1.0.3",
     "ejs": "2.3.1",
+    "express": "^4.16.2",
     "glob": "^7.1.0",
     "gravatar": "1.1.1",
     "iconv-lite": "^0.4.13",
