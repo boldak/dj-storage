@@ -57,9 +57,37 @@
 //     })
 // } 
 
+let Promise = require('bluebird')
+let storageUtils = require('dj-dps-commands/src/storage/utils')
+let writeFile = Promise.promisify(require('fs').writeFile);
+
 module.exports.bootstrap = function (cb) {
-  sails.log.debug("Initialize dps server")
+  sails.log.debug("Initialize DJ Storage service")
   sails.log.debug("Use DB " + JSON.stringify(sails.config.connections.mongodbServer))
+  
+  // Restore user defined models
+
+  Entities
+    .find({})
+    .then((res) => {
+      sails.log.debug("Restore user defined models:")
+      Promise.all( res.map((model) => {
+          sails.log.debug(`=> ${model.identity}`)
+          return writeFile(   `./api/models/${model.identity}.js`, 
+            `module.exports = ${JSON.stringify(model.model)}`
+          );
+      }))
+      .then((res)=> {
+        sails.log.debug('Reload ORM hook')
+        storageUtils
+          .reloadORM(sails)
+          .then(() => {
+            sails.log.debug('User defined models are restored')
+            cb()
+        })
+      })
+    })
+
   // sails.services.passport.loadStrategies();
 
   // add default admins; you can add others later on using mongodb console
@@ -80,5 +108,5 @@ module.exports.bootstrap = function (cb) {
   // addDefaultPortalConfig();
   // // It's very important to trigger this callback method when you are finished
   // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
-  cb();
+  // cb();
 };
