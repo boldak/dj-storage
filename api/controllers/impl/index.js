@@ -16,4 +16,5 @@ module.exports = [
 	require("./echo")
 	// ,require("./newmodel")
 ]
+//.concat(require('./sendmail'))
 // .concat(require("./storage"))
