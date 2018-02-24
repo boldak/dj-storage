@@ -1,0 +1,1 @@
+module.exports = {"attributes":{"form":{"model":"form"},"user":{"type":"json"},"data":{"type":"json"}}}

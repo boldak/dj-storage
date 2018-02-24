@@ -1,0 +1,1 @@
+module.exports = {"attributes":{"project":{"model":"Project"},"cloned":{"model":"Form"},"owner":{"type":"json"},"collaborators":{"type":"json"},"config":{"type":"json"},"metadata":{"type":"json"},"history":{"type":"json"}}}

@@ -1,0 +1,1 @@
+module.exports = {"attributes":{"owner":{"type":"json"},"collaborators":{"type":"json"},"config":{"type":"json"},"metadata":{"type":"json"},"history":{"type":"json"}}}

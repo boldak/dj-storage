@@ -1,0 +1,1 @@
+module.exports = {"attributes":{"identity":{"type":"string"},"metadata":{"type":"json"}}}
