@@ -7,7 +7,7 @@ jspm_packages/
 bower_components/
 
 # Sails.js / Waterline / Grunt
-.tmp
+test
 dump.rdb
 
 # Node.js / NPM
@@ -41,4 +41,4 @@ bin
 obj
 *.dat
 *.suo
-*.tmp
+
