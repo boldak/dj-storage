@@ -7,7 +7,6 @@ jspm_packages/
 bower_components/
 
 # Sails.js / Waterline / Grunt
-test
 dump.rdb
 
 # Node.js / NPM
