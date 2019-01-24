@@ -15,24 +15,48 @@ module.exports = {
         // console.log("RUN")
         var host, script, locale, state;
 
+        // console.log("REQ.FILE",req.file('file'))
+
         req.file('file').upload({}, (err, uploadedFiles) => {
             
             if (uploadedFiles.length>0) {
                 
                 let file = uploadedFiles[0]
+                // console.log("FILE", file)
                 let fileContent = require("fs").readFileSync(file.fd)
+                // console.log(fileContent)
                 // let config = JSON.parse(req.body.config)
                 
-                script = JSON.parse(req.body.script);
-                state =  JSON.parse(req.body.state)
-                locale = JSON.parse(req.body.locale) || "en";
+                // console.log("SCRIPT", req.body.script)
+
+                script = JSON.parse(JSON.stringify(req.body.script));
+                
+                // console.log("STATE", req.body.state)
+                if(!req.body.state=="undefined") state =  JSON.parse(req.body.state)
+                
+                // console.log("LOCALE", req.body.locale)
+                
+                if(req.body.locale) locale = JSON.parse(req.body.locale) 
+                
+                locale = locale|| "en";
+                
                 host = req.host+":"+req.port;
                 locale = (locale == "uk") ? "ua" : locale;
                 state = (state) || {
                     locale : locale 
                 }
+                
+                // console.log("CLIENT", req.body.client)
                 state.client = JSON.parse(req.body.client);
-                state.storage.$file = fileContent;
+                state.storage = state.storage || {};
+                let text  = fileContent.toString()
+                state.storage.$file = {
+                    binary: fileContent,
+                    text: text,
+                    name: file.fd
+                };
+
+                // console.log("FILE CONTENT ", state.storage.$file)
             
             } else {
 

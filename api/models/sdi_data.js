@@ -1,0 +1,1 @@
+module.exports = {"attributes":{"name":{"type":"string"},"comment":{"type":"string"},"data":{"type":"json"}},"permissions":{"create":{"role":["owner","administrator"]},"alter":{"role":["owner","administrator"]},"drop":{"role":["owner","administrator"]},"desc":{},"select":{},"insert":{},"update":{},"delete":{}}}
