@@ -52,5 +52,9 @@
     "sails-hook-dev": "0.2.2",
     "sails-mongo": "^0.12.2",
     "uuid": "^2.0.1"
+  },
+  "engines": {
+    "node": "8.12.x",
+    "npm": "6.4.x"
   }
 }
