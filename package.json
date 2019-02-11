@@ -28,6 +28,8 @@
 
     "dj-dps-commands": "file:./local_modules/dj-dps-commands",
     "dj-dps-interpreter": "file:./local_modules/dj-dps-interpreter",
+    "dj-dps-parser": "file:./local_modules/dj-dps-parser",
+    "dj-geodata": "file:./local_modules/dj-geodata",
     "dj-utils": "file:./local_modules/dj-utils",
 
     "ejs": "2.3.1",
