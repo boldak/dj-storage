@@ -58,7 +58,7 @@
 // } 
 
 let Promise = require('bluebird')
-let storageUtils = require('dj-dps-commands/src/storage/utils')
+let storageUtils = require('../local_modules/dj-dps-commands/src/storage/utils')
 let writeFile = Promise.promisify(require('fs').writeFile);
 
 module.exports.bootstrap = function (cb) {
