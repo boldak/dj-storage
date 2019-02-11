@@ -4,9 +4,9 @@ var conf = require("./impl")
 
 var Script = require("dj-dps-interpreter");
 
-var logger = require("dj-utils").log.global;
+// var logger = require("dj-utils").log.global;
 
-logger.debug("Start DJ Storage Service")
+// logger.debug("Start DJ Storage Service")
 
 module.exports = {
 
