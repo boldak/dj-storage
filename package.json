@@ -7,7 +7,8 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --harmony ./node_modules/sails/bin/sails lift"
   },
   "repository": {
     "type": "git",
@@ -24,9 +25,11 @@
     "bluebird": "^3.5.0",
     "connect-mongo": "^2.0.0",
     "del": "^3.0.0",
+
     "dj-dps-commands": "file:./local_modules/dj-dps-commands",
     "dj-dps-interpreter": "file:./local_modules/dj-dps-interpreter",
     "dj-utils": "file:./local_modules/dj-utils",
+
     "ejs": "2.3.1",
     "express": "^4.16.2",
     "glob": "^7.1.0",
@@ -54,7 +57,6 @@
     "uuid": "^2.0.1"
   },
   "engines": {
-    "node": "8.12.x",
-    "npm": "6.4.x"
+    "node": "8.12.x"
   }
 }
