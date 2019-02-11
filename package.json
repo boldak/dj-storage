@@ -24,48 +24,31 @@
     "bcryptjs": "2.1.0",
     "bluebird": "^3.5.0",
     "connect-mongo": "^2.0.0",
-    "del": "^3.0.0",
-    "dj-dps-commands": "file:./local_modules/dj-dps-commands",
-    "dj-dps-interpreter": "file:./local_modules/dj-dps-interpreter",
-    "dj-dps-parser": "file:./local_modules/dj-dps-parser",
-    "dj-geodata": "file:./local_modules/dj-geodata",
-    "dj-utils": "file:./local_modules/dj-utils",
-
-
-   
     "copy-object": "^1.0.0",
     "csvjson": "^4.0.0",
     "date-and-time": "^0.3.0",
+    "del": "^3.0.0",
+    "dj-dps-commands": "file:local_modules/dj-dps-commands",
+    "dj-dps-interpreter": "file:local_modules/dj-dps-interpreter",
+    "dj-dps-parser": "file:local_modules/dj-dps-parser",
+    "dj-geodata": "file:local_modules/dj-geodata",
+    "dj-utils": "file:local_modules/dj-utils",
+    "ejs": "2.3.1",
+    "express": "^4.16.2",
+    "glob": "^7.1.0",
+    "gravatar": "1.1.1",
     "gravatar-api": "^1.5.0",
     "html2json": "^1.0.2",
     "iconv-lite": "^0.4.13",
     "json2csv": "^3.7.2",
     "jsonpath": "^0.2.9",
     "lodash-node": "^3.10.2",
-    "mime": "^1.3.4",
-    "moment": "^2.23.0",
-    "node-xlsx": "^0.6.0",
-    "nodemailer": "^4.4.1",
-    "request-promise": "^4.1.1",
-    "string-natural-compare": "^1.1.1",
-    "xml2js": "^0.4.16",
-
-
-
-
-
-
-    "ejs": "2.3.1",
-    "express": "^4.16.2",
-    "glob": "^7.1.0",
-    "gravatar": "1.1.1",
-    "iconv-lite": "^0.4.13",
-    "jsonpath": "^0.2.9",
-    "lodash-node": "^3.10.2",
     "match-words": "^1.0.0",
     "mime": "^1.3.4",
     "minimatch": "^3.0.3",
     "moment": "^2.23.0",
+    "node-xlsx": "^0.6.0",
+    "nodemailer": "^4.4.1",
     "oauth": "0.9.12",
     "object-hash": "0.5.0",
     "package-info": "^2.2.3",
@@ -79,7 +62,9 @@
     "sails": "~0.12.14",
     "sails-hook-dev": "0.2.2",
     "sails-mongo": "^0.12.2",
-    "uuid": "^2.0.1"
+    "string-natural-compare": "^1.1.1",
+    "uuid": "^2.0.1",
+    "xml2js": "^0.4.16"
   },
   "engines": {
     "node": "8.12.x"
