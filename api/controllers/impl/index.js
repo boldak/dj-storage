@@ -13,7 +13,7 @@ module.exports = [
 	// require("./ddl/create"),
 	// require("./ddl/alter"),
 	// require("./ddl/drop"),
-	require("./echo")
+	// require("./echo")
 	// ,require("./newmodel")
 ]
 // .concat(require("./storage"))
