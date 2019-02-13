@@ -1,8 +1,7 @@
-var conf = require("./impl")
-           .concat(require("../../local_modules/dj-dps-commands"));
+var conf = require("./modules/dj-dps-commands");
 
 
-var Script = require("../../local_modules/dj-dps-interpreter");
+var Script = require("./modules/dj-dps-interpreter");
 
 // var logger = require("dj-utils").log.global;
 

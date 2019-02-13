@@ -1,7 +1,6 @@
 var fs = require("fs")
-var conf = require("./impl")
-           .concat(require("dj-dps-commands"));
-var Script = require("dj-dps-interpreter");
+var conf = require("./modules/dj-dps-commands");
+var Script = require("./modules/dj-dps-interpreter");
 
 var util = require("util");
 

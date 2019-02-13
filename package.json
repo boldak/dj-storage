@@ -28,11 +28,7 @@
     "csvjson": "^4.0.0",
     "date-and-time": "^0.3.0",
     "del": "^3.0.0",
-    "dj-dps-commands": "file:local_modules/dj-dps-commands",
-    "dj-dps-interpreter": "file:local_modules/dj-dps-interpreter",
-    "dj-dps-parser": "file:local_modules/dj-dps-parser",
-    "dj-geodata": "file:local_modules/dj-geodata",
-    "dj-utils": "file:local_modules/dj-utils",
+    
     "ejs": "2.3.1",
     "express": "^4.16.2",
     "glob": "^7.1.0",

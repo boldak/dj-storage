@@ -8,58 +8,30 @@
  * For more information on bootstrapping your app, check out:
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.bootstrap.html
  */
-// var fs = require('fs');
 
-// var addDefaultAppConfigs = function () {
-//   sails.log.debug("Update default apps")
-//   fs.readdir('apps', function (err, files) {
-//     if (!err) {
-//       files.forEach(function (filename) {
-//         sails.log.debug("App "+filename)
-//         var match = /^(.*)\.json$/i.exec(filename);
-//         if (match) {
-//           var appName = match[1];
-//           fs.readFile('apps/' + filename, function (err, data) {
-//             if (!err) {
-//               sails.log.info('Preexisting app configuration found: apps/' + filename);
-//               var app = JSON.parse(data);
-//               app.name = appName;
-//               AppConfig.findOrCreate({name: appName}, app, function (err) {
-//                 if (err) {
-//                   sails.log.warn('Error in AppConfig.findOrCreate app config during sails bootstrap: ' + err);
-//                 }
-//               });
-//             } else {
-//               sails.log.warn('Error loading file: apps/' + filename + ', error: ' + err);
-//             }
-//           });
-//         }
-//       });
-//     } else {
-//       sails.log.warn('Error reading apps directory!');
-//     }
-//   });
-// };
-
-// var addDefaultPortalConfig = function(){
-
-//   sails.log.debug("Update portal config")
-//   PortalConfig.find({})
-//     .then(function(config){
-//       if(config.length>0){
-//         sails.log.debug("Portal Config: "+JSON.stringify(config[0].value))  
-//       }else{
-//           PortalConfig.create({value:{"defaultApp":"app-list"}})
-//             .then(function(conf){
-//               sails.log.debug("Create default portal config:"+JSON.stringify(conf.value))
-//           })
-//       }
-//     })
-// } 
 
 let Promise = require('bluebird')
-let storageUtils = require('../local_modules/dj-dps-commands/src/storage/utils')
 let writeFile = Promise.promisify(require('fs').writeFile);
+let util = require("util")
+
+
+let reloadORM =  sails => new Promise(( resolve, reject ) => {
+    try {
+            
+            sails.once("hook:orm:reloaded", () => { resolve() })
+            sails.hooks.orm.teardown(()=>{
+                sails.hooks.orm.configure()
+                _.forIn(sails.models, (value,key) => {
+                    if(util.isObject(value)) value.datastore = undefined;
+                })
+                sails.hooks.orm.reload();
+            })
+        } catch (e) {
+            reject(e.toString()) 
+        }       
+  })
+
+
 
 module.exports.bootstrap = function (cb) {
   sails.log.debug("Initialize DJ Storage service")
@@ -79,12 +51,12 @@ module.exports.bootstrap = function (cb) {
       }))
       .then((res)=> {
         sails.log.debug('Reload ORM hook')
-        storageUtils
-          .reloadORM(sails)
+        reloadORM(sails)
           .then(() => {
             sails.log.debug('User defined models are restored')
             cb()
-        })
+          })
+          .catch(e => {sails.log.error(e)})
       })
     })
 

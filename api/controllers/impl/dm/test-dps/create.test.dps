@@ -1,7 +1,0 @@
-<?javascript
-	$scope.data = {
-		metadata:"metadata_id",
-		data:"ver()"
-	}
-?>
-dm.create(collection:'dps',data:{{data}})	
