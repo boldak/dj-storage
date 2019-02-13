@@ -24,9 +24,10 @@ const urlLookup = /\^[0-9]+/gi;
 const commandNameRE = /"@*([a-zA-Z0_-]+[a-zA-Z0-9_-]*\.*)+":/gi;
 const paramsRE = /:[\{\^\[]+[a-zA-Z0-9_:",\^\{\}\[\]-]*[\}\]]+;*|:\^[0-9]+;*/gi;
 
-const scriptRE = /(\<\?([^?]|(\?+[^?\>]))*\?\>)/g;
+const scriptRE = /(\<\?[a-z]([^?]|(\?+[^?\>]))*\?\>)/g;
 
 const bindableRE = /({{[a-zA-Z\$\_]+[a-zA-Z0-9\$\_\.\[\]\"\']*}})/g;
+const scriptableRE = /((\<\?[\ \t\r\n]+)[a-zA-Z0-9\$\_\.\[\]\,\=\>\<\ \t\r\n\{\}\(\)\:\;\"\'\`\+\-\*\/]*\?\>)/gim;
 
 const urlRE = /((https?:\/\/)([a-zA-Z0-9]+[a-zA-Z0-9_-]*)(:\d{0,4})?([a-zA-Z0-9_\-\/\%\=\{\}\?\+\&\.\:]*))/g;
 
@@ -62,10 +63,16 @@ class ScriptParser {
         let p = str
             .replace(scriptRE, ParserUtils.varIndex)
             .replace(urlRE, ParserUtils.pushUrl)
-            .replace(bindableRE,"\"$1\"")
-
+          
+            // .replace(bindableRE,ParserUtils.bindIndex)
+            .replace(bindableRE,ParserUtils.bindIndex)
+            .replace(scriptableRE,ParserUtils.bindIndex)
+            
+            
             .replace(lineCommentRE, "")
+            
             .replace(valuesRE, ParserUtils.varIndex)
+          
             .replace(lineRE, "")
             .replace(inlineCommentRE, "")
 
@@ -78,6 +85,10 @@ class ScriptParser {
             .replace(/\)/gim, "");
 
         try {
+            // console.log("___________________________________________________")
+            // console.log(p)
+            // console.log("===================================================")
+            
             p = p
                 .split(";")
                 .map(item => `${item};`)
@@ -94,7 +105,7 @@ class ScriptParser {
                         if (item.match(defaultValueRE)) {
                           let p;
                           if (item.match(/\:\{\^/gi)) {
-                            p = item.substring(3, item.length - 3);
+                            p = item.substring(3, item.length - 3)
                           } else if (item.match(/\:\{/gi)) {
                             p = item.substring(2, item.length - 2);
                           }
@@ -102,6 +113,7 @@ class ScriptParser {
                           return `:{"${self.defaultPropName[cmdName]}":${p}}`
                         }
                         if (item.match(defaultStoredValueRE)) {
+                            // console.log("==> ", item)
                           const p = item.substring(1, item.length - 1);
 
                           return `:{"${self.defaultPropName[cmdName]}":${p}}`;
@@ -121,8 +133,12 @@ class ScriptParser {
 
             const script = [];
             const cmd = p.split(";");
+            // console.log("________________________________________________________________")
             cmd.forEach((cm, i) => {
                 try {
+                  
+                  // console.log(`{${cm.replace(/\^[0-9]+/gim, ParserUtils.varValue)}}`)
+                    
                   const t = JSON.parse(`{${cm.replace(/\^[0-9]+/gim, ParserUtils.varValue)}}`);
                   script.push(t);
                 } catch(e) {

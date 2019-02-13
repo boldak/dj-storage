@@ -400,11 +400,34 @@ Script.prototype.execute = function(command, state, config) {
         }
         if (util.isString(o)) {
             if (o.match(/^\{\{[\s\S]*\}\}$/)) {
-                var key = o.substring(2, o.length - 2);
-                var r = _.get(c,key)
+                let key = o.substring(2, o.length - 2);
+                let r = _.get(c,key)
+
+                // console.log("apply bind => \"",o,"\" :  typeof ", ((r) ? typeof r : "$undefined"))
+                
                 return (r) ? r : null
             } else {
-                return o
+                if (o.match(/^\<\?[\s\S]*\?\>$/)) {
+                    let r = o.substring(2, o.length - 2);
+
+                    try {
+                        r = eval(
+                            `
+                            (function() { 
+                              let $scope = this;
+                              return (${r}) 
+                            })
+                            `
+                          ).apply(c)  
+
+                        return r    
+                    } catch ( e ) {
+                        throw new ScriptError("Cannot evaluate scriptable: " + e.toString())
+                    }
+                    
+                } else {
+                    return o    
+                }
             }
         }
         return o;

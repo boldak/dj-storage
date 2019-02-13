@@ -61,10 +61,23 @@ class ParserUtils {
           return `context(value:^${values.length - 1});${postProcess}();`;
       } else {
           key = key.replace(/\"/gi, "'");
+          // console.log("value => ", key)
           values.push(key);
 
           return `^${values.length - 1}`;
       }
+  }
+
+  bindIndex(tag){
+    let key = tag
+              .replace(/\"/gim, '\\"')
+              .replace(/\r/gim, "\\r")
+              .replace(/\n/gim, "\\n")
+              .replace(/\t/gim, "\\t")
+              
+    // console.log("bind => ", key)
+    values.push(key)
+    return `^${values.length - 1}`
   }
 
 
