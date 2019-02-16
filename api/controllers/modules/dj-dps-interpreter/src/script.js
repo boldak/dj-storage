@@ -422,7 +422,7 @@ Script.prototype.execute = function(command, state, config) {
 
                         return r    
                     } catch ( e ) {
-                        throw new ScriptError("Cannot evaluate scriptable: " + e.toString())
+                        throw new ScriptError(`Cannot evaluate scriptable: ${r} :` + e.toString())
                     }
                     
                 } else {

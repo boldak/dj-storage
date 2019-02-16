@@ -50,15 +50,26 @@ module.exports = {
                         }))
                         .then(() => {
                             Promise.all(res.map((item) => {
-                                  return  doDeleteData.execute({settings:{collection: item.identity}},state) 
+                                  return  new Promise((resolve,reject) => {
+                                    doDeleteData.execute({settings:{collection: item.identity}},state)
+                                    .then( res => resolve(res) )
+                                    .catch( e => resolve())
+                                  }) 
                             }))
                             .then(() => {
                                 state.head = {
                                     data: res,
                                     type: "json"
                                 }
-                                Entities
-                                    .destroy(criteria)
+                                
+                                new Promise( (resolve, reject) => {
+                                   Entities.destroy(criteria)
+                                   .then(() => { resolve() })
+                                   .catch(() => { resolve() })                                                         
+                                })
+
+                                // Entities
+                                    // .destroy(criteria)
                                     .then(() => {
                                         Promise
                                             .all(res.map((item) => {
@@ -78,7 +89,7 @@ module.exports = {
                                     })
                                     .catch((e) => { reject(new DDLDropImplError(e.toString()))})    
                                 })
-                                .catch((e) => { reject(new DDLDropImplError(e.toString()))})  
+                                .catch((e) => { reject(new DDLDropImplError("WARNING "+e.toString()))})  
                             })
                         .catch((e) => { reject(new DDLDropImplError(e.toString()))}) 
                     })
