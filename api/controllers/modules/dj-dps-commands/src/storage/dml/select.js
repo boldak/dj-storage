@@ -3,6 +3,7 @@ let Promise = require("bluebird");
 let jp = require("jsonpath");
 let util = require("util");
 let storageUtils = require("../utils");
+let setCommand = require("../../var/set")
 
 class DMLSelectImplError extends Error {
   constructor(message) {
@@ -136,6 +137,9 @@ module.exports =  {
                     state.head = {
                         type: "json",
                         data: result || []
+                    }
+                    if(command.settings.into){
+                        resolve(setCommand.execute({settings:{var:command.settings.into}}, state))
                     }
                     resolve(state);
                 })

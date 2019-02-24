@@ -19,7 +19,8 @@ module.exports = {
         "on": "criteria",
         "with": "collection",
         "as": "mapper",
-        "map": "mapper"
+        "map": "mapper",
+        "return":"mapper"
     },
 
     defaultProperty: {},
@@ -46,7 +47,7 @@ module.exports = {
         if (!util.isArray(command.settings.collection)) 
             throw new JoinError("Incompatible collection type: '" + (typeof command.settings.collection)+".")
         
-        command.settings.mapper = (command.settings.mapper) ? command.settings.mapper : item=>item 
+        command.settings.mapper = (command.settings.mapper) ? command.settings.mapper : item => item 
         
         if(!util.isFunction(command.settings.mapper))
             throw new JoinError("Unexpected mapper type: '" + (typeof command.settings.mapper)+".")
