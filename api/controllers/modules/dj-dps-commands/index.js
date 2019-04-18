@@ -26,6 +26,8 @@ module.exports =
         .concat(require("./src/collection"))
         .concat(require("./src/matrix"))
         .concat(require("./src/statistic"))
+        .concat(require("./src/timeline"))
+        .concat(require("./src/bbn"))
 
 
 
