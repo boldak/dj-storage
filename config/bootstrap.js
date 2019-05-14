@@ -34,6 +34,8 @@ let reloadORM =  sails => new Promise(( resolve, reject ) => {
 
 
 module.exports.bootstrap = function (cb) {
+  sails.log.debug("Process enviroment:");
+  _.forIn(process.env, (value,key) => {sails.log.debug(key+" = "+ value)})
   sails.log.debug("Initialize DJ Storage service")
   sails.log.debug("Use DB " + JSON.stringify(sails.config.connections.mongodbServer))
   
