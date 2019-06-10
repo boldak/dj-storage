@@ -229,7 +229,7 @@ var d3 = {};
     var m = u.length;
     var n = u[0].length;
 
-    // console.assert(m >= n, 'Need more rows than columns');
+    console.assert(m >= n, 'Need more rows than columns');
 
     var e = d3.range(n).map(function () {
       return 0;
@@ -400,7 +400,7 @@ var d3 = {};
           break  //break out of iteration loop and move on to next k value
         }
 
-        // console.assert(iteration < itmax - 1, 'Error: no convergence.');
+        console.assert(iteration < itmax - 1, 'Error: no convergence.');
 
         // shift from bottom 2x2 minor
         x = q[l]
@@ -491,12 +491,14 @@ var d3 = {};
    
     let X = data
     let scaled = scale(X, true, true)
-    
+
+
     let USV = svd(scaled);
+ 
+
     let U = USV.U;
     let S = diag(USV.S);
     let V = USV.V;
-
 
     // T = X*V = U*S
     let pcXV = dot(X, V)
@@ -506,14 +508,10 @@ var d3 = {};
     let _s = d3.sum(eigenValues)/eigenValues.length;
     eigenValues = diag(eigenValues.map( v =>  v/_s ))
 
-
     let factorCoef = V.map(d => d.map((v,i) => v/Math.sqrt(eigenValues[i][i])))
   
-
     let loadings = V.map(d => d.map((v,i) => v*Math.sqrt(eigenValues[i][i])))
-   
     let scores = dot(scaled,factorCoef)
-   
     // let prod = trunc(sub(pcXV, pcUdS), 1e-12);
     // let zero = zeros(prod.length, prod[0].length);
    

@@ -2,6 +2,7 @@ module.exports =
 
     require("./src/help")
         // .concat(require("./src/dataset"))
+        .concat(require("./src/nlp"))
         .concat(require("./src/context"))
         .concat(require("./src/var"))
         .concat(require("./src/json"))
@@ -28,6 +29,9 @@ module.exports =
         .concat(require("./src/statistic"))
         .concat(require("./src/timeline"))
         .concat(require("./src/bbn"))
+        .concat(require("./src/service"))
+console.log("SUPPORTED COMMANDS")
+console.log(module.exports.map(item => item.name).join("\r\n"))
 
 
 
