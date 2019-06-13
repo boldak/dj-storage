@@ -38,6 +38,7 @@
     "gravatar": "1.1.1",
     "gravatar-api": "^1.5.0",
     "html2json": "^1.0.2",
+    "i18n-iso-countries": "^4.1.0",
     "iconv-lite": "^0.4.13",
     "jsbayes": "^0.1.0",
     "json2csv": "^3.7.2",
