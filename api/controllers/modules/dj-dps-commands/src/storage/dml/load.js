@@ -3,7 +3,8 @@ var iconv = require('iconv-lite');
 
 
 var Promise = require("bluebird");
-var http = require('request-promise');
+var axios = require('axios');
+
 var js = require("../../javascript/eval").implementation;
 var set = require("../..//var/set").implementation;
 let util = require("util");
@@ -21,27 +22,25 @@ SourceImplError.prototype.constructor = SourceImplError;
 var getUrl = function(url,encode) {
     return new Promise(function(resolve, reject) {
         try {
-            encode = encode || "utf8";
-            if(['win1251','utf8'].indexOf(encode)<0){
-                reject(new SourceImplError("Encoding "+ encode+" not recognized. Use 'win1251' or 'utf8'"))
-                
-            }else{
-
-                var options = {
-                    // localAddress: url,
-                    uri: url,
-                    method: "get",
-                    encoding: encode
-                }
-
-                http(options)
+                axios({
+                    method: 'get',
+                    url:url,
+                    responseType: 'arraybuffer'
+                })
                     .then(function(result) {
-                       resolve(result)
+                        let ctype= result.headers["content-type"];
+
+                        if (ctype.includes("charset=windows-1251"))
+                            var data = iconv.decode(result.data, 'windows-1251');
+                        else
+                            data = iconv.decode(result.data, 'utf-8'); 
+                       
+                       resolve(data)
                     })
                     .catch(function(e) {
                         reject(new SourceImplError(e.toString()))
                     })
-            }
+            // }
                     
         } catch(e) {
             reject(new SourceImplError(e.toString()))

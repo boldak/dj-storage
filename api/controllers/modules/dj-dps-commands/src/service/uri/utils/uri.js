@@ -29,19 +29,3 @@ module.exports = {
 	aboutIp
 }
 
-
-// resolveUrl('https://im6.kommersant.ru')
-// 	.then( address => {
-		
-// 		aboutIp(address)
-// 			.then(data => {
-
-// 				console.log(JSON.stringify(data,null,'\t'))
-// 			})
-// 			.catch(e => {
-// 				console.error(e)		
-// 			}) 
-// 	})
-// 	.catch((e) => {
-// 		console.error(e)
-// 	})

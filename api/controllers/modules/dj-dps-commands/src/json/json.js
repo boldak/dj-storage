@@ -3,6 +3,7 @@ var iconv = require('iconv-lite');
 var csvjson = require("csvjson");
 var xmljson = require("xml2js");
 var htmljson = require('html2json').html2json;
+// var htmljson = require("node-html2json");
 var Promise = require('bluebird');
 
 var JsonImplError = function(message) {
@@ -52,9 +53,10 @@ var implementation = function(command, state) {
       if(state.head.type == "html"){
           
          state.head = {
-              data: htmljson(state.head.data.replace(/<!DOCTYPE[\w\s\.]*>/g,"")),
+              data: htmljson(state.head.data.replace(/<!DOCTYPE[\w\s\.]*>/g,""),{title:"*"}),
               type: "json"
             }
+        // console.log(state.head.data)    
         return state    
       }  
 

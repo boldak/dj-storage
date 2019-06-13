@@ -1,4 +1,5 @@
 module.exports = [
     require("./html"),
-    require("./wrapHtml")
+    require("./wrapHtml"),
+    require("./html-select")
 ]
