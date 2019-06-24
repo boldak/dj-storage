@@ -15,17 +15,20 @@ module.exports = {
 	matrix2floats(matrix){
 		try {
 
-			let res = matrix.map( row => row.map(col => Number.parseFloat(col.toString())))
-			let validations = res.map( (r,i1) => r.filter( (v,i2) => {
-				
-				return Number.isNaN(v)
-			}))
-			let v = []
-			validations.forEach(r => { v = v.concat(r)})
-			if ( v.length > 0 ) throw new StatError("Cannot convert values to floats") 
+			let res = matrix.map( row => row.map(col => ( (col !== undefined) ? Number.parseFloat(col.toString()) : Number.NaN)))
+			let validations = []
+			
+			res.forEach( (r,i1) => {
+				r.forEach( (v,i2) => {
+					if(Number.isNaN(v)) validations.push([i1,i2])
+				})	
+			})
+			
+			
+			if ( validations.length > 0 ) throw new StatError("Cannot convert matrix to floats") 
 			return res	
 		} catch (e) {
-			throw new StatError("Cannot convert values to floats")
+			throw new StatError("matrix " +e.toString())
 		}
 	},
 
@@ -33,10 +36,10 @@ module.exports = {
 		try {
 			let res = array.map( d => Number.parseFloat(d.toString()))
 			let v = res.filter( r =>  Number.isNaN(r))
-			if ( v.length > 0 ) throw new StatError("Cannot convert values to floats") 
+			if ( v.length > 0 ) throw new StatError("Cannot convert array to floats") 
 			return res	
 		} catch (e) {
-			throw new StatError("Cannot convert values to floats")
+			throw new StatError(e.toString())
 		}
 	},
 

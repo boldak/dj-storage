@@ -32,9 +32,9 @@ module.exports = {
 
     execute: function(command, state, config) {
 
-        
-        if(!command.settings.mapper)
-            throw new StatImplError("Cluster mapper not defined")
+        command.settings.mapper  = command.settings.mapper || Object.keys(state.head.data[0]) 
+        // if(!command.settings.mapper)
+        //     throw new StatImplError("Cluster mapper not defined")
         
         if(!util.isFunction(command.settings.mapper)){
             let attr_names = (util.isArray( command.settings.mapper)) ? command.settings.mapper : [ command.settings.mapper ]

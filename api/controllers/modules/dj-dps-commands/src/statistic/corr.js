@@ -24,6 +24,7 @@ module.exports = {
 
     execute: function(command, state, config) {
 
+         command.settings.mapper  = command.settings.mapper || Object.keys(state.head.data[0]) 
         
         if(!command.settings.mapper)
             throw new StatImplError("Correlation mapper not defined")

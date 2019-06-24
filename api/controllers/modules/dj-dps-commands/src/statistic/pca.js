@@ -30,6 +30,7 @@ module.exports = {
         
         if(!command.settings.mapper)
             command.settings.mapper = _.keys( state.head.data[0]).map( d => d )
+        console.dir(command.settings.mapper)
             // throw new StatImplError("PCA mapper not defined")
         
         if(!util.isFunction(command.settings.mapper)){
