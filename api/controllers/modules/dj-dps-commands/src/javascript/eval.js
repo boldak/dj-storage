@@ -26,7 +26,18 @@ var implementation = function(state, config){
 
                 sandbox._util = {
 
+                    
                     uuid:uuid,
+
+                    extractAbbreviation(s) {
+                      let m = s.match(/\(([a-zA-Z0-9\_\.]*)\)/g)
+                      return (m) ? m[0].substring(1,m[0].length-1) : null
+                    },
+
+                    extractTag(s){
+                      let m = s.match(/\#([a-zA-Z0-9\_]*)\b/g)
+                      return (m) ? m[0].substring(1) : null
+                    },
                     
                     numberPrecisionMapper(digits,fields){
                         return item => {

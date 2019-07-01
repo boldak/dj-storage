@@ -4,6 +4,6 @@ module.exports =
 		require("./content/stemmize"),
 		require("./content/stems"),
 		require("./content/tokens"),
-		require("./content/n-grams")
-			
+		require("./content/n-grams"),
+		require("./content/tfidf")	
 	]
