@@ -58,6 +58,7 @@ module.exports = {
             if (command.settings.schema && !command.settings.schema.identity) reject(new DDLCreateImplError(`Schema identity for ${JSON.stringify(command.settings.schema.entities)} is undefined.`))      
             if (command.settings.schema && !command.settings.schema.entities) reject(new DDLCreateImplError(`Entities description for schema ${command.settings.schema.identity} is undefined.`))      
             
+            console.log("!!! ",command.settings.model)
             let models = [];
 
             if (command.settings.schema){
@@ -82,6 +83,7 @@ module.exports = {
                     }
                 })
             }
+            console.log("Create models", JSON.stringify(models))
 
             Promise.all( models.map((model) => {
                 return new Promise((resolve,reject) =>{
