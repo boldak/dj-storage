@@ -1,0 +1,1 @@
+module.exports = {"attributes":{"tag":"string","data":{"type":"json"}}}

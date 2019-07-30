@@ -56,7 +56,8 @@ module.exports = {
 	}),
 
   access: (client, identity, operation) => new Promise((resolve, reject) => {
-     
+     console.log(`Data access for ${client.user.name} via ${client.app} to ${identity}.${operation}`)
+
       Entities
         .findOne({identity:identity})
         .then( (res) => {
@@ -72,7 +73,8 @@ module.exports = {
           if(client.user.isOwner) roles.push('author')
           if(client.user.id == owner.user.id) roles.push('owner')
             
-          
+          console.log(`Roles: ${JSON.stringify(roles)}`)
+
           let app = client.app;
           if(!permissions || (!permissions.role && !permissions.app) ){
             resolve();
@@ -81,29 +83,37 @@ module.exports = {
             if(_.intersection(permissions.role, roles).length > 0){
               resolve()  
             } else { 
-              reject(new PermissionException(`${operation} is not available for entity '${identity}' 
-(client: ${JSON.stringify(client)})`))
+              reject(new PermissionException(`##1## ${operation} is not available for entity '${identity}' 
+(client: ${JSON.stringify(client)}) 
+identified as ${JSON.stringify(roles)} 
+conflict with permissions ${JSON.stringify(permissions)}`))
             }
             return
           } else if (permissions && !permissions.role && permissions.app){
             if( permissions.app.indexOf(app) >= 0 ){
               resolve()  
             } else { 
-              reject(new PermissionException(`${operation} is not available for entity '${identity}'
-(client: ${JSON.stringify(client)})`))
+              reject(new PermissionException(`##2## ${operation} is not available for entity '${identity}' 
+(client: ${JSON.stringify(client)}) 
+identified as ${JSON.stringify(roles)} 
+conflict with permissions ${JSON.stringify(permissions)}`))
             }
             return
           } else if (permissions && permissions.role && permissions.app){
             if((_.intersection(permissions.role, roles).length > 0) && (permissions.app.indexOf(app) >= 0 )){
               resolve();
             } else {
-              reject(new PermissionException(`${operation} is not available for entity '${identity}'
-(client: ${JSON.stringify(client)})`))
+             reject(new PermissionException(`##3## ${operation} is not available for entity '${identity}' 
+(client: ${JSON.stringify(client)}) 
+identified as ${JSON.stringify(roles)} 
+conflict with permissions ${JSON.stringify(permissions)}`))
             }
             return
           }
-          reject(new PermissionException(`${operation} is not available for entity '${identity}'
-(client: ${JSON.stringify(client)})`))             
+          reject(new PermissionException(`##4## ${operation} is not available for entity '${identity}' 
+(client: ${JSON.stringify(client)}) 
+identified as ${JSON.stringify(roles)} 
+conflict with permissions ${JSON.stringify(permissions)}`))          
         })
         .catch((e) => { reject(new PermissionException(e.toString()))})
   }),
