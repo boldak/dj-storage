@@ -22,7 +22,8 @@ module.exports = [
     require("./entropy"),
     require("./std"),
     require("./min"),
-    require("./max")
+    require("./max"),
+    require("./regression")
 
     
     

@@ -5,7 +5,10 @@ var parser = require("../../dj-dps-parser");
 var copy = require('./lib/copy');
 var $plain = require('./lib/plain');
 var util = require("util");
+
 let _ = require("lodash-node");
+var vm = require("vm");
+let moment = require("moment")
 
 var ScriptError = function(message) {
     this.message = message;
@@ -409,18 +412,41 @@ Script.prototype.execute = function(command, state, config) {
             } else {
                 if (o.match(/^\<\?[\s\S]*\?\>$/)) {
                     let r = o.substring(2, o.length - 2);
+                    console.log("scriptable", r)
 
                     try {
-                        r = eval(
-                            `
-                            (function() { 
-                              let $scope = this;
-                              return (${r}) 
-                            })
-                            `
-                          ).apply(c)  
+                        // c.moment = require("moment")
 
-                        return r    
+                        const sandbox = {};
+                        sandbox._ = _;
+                        sandbox.moment = moment;
+                        sandbox.$scope = c;
+
+
+                        let scriptable = `
+                            _result = ${r}
+                        `
+
+                        const script = new vm.Script(scriptable);
+                        const context = new vm.createContext(sandbox);
+                        script.runInContext(context);
+
+
+                        // r = eval(
+                        //     `
+                        //     (
+                                
+                        //         function() { 
+                                    
+                        //             let $scope = this;
+                        //             return (${r}) 
+                        //         }
+                        //     )
+                        //     `
+                        //   ).apply(c)  
+
+                        return sandbox._result 
+
                     } catch ( e ) {
                         throw new ScriptError(`Cannot evaluate scriptable: ${r} :` + e.toString())
                     }
