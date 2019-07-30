@@ -72,7 +72,7 @@ module.exports = {
           if(client.user.isAdmin) roles.push('administarator')
           if(client.user.isCollaborator) roles.push('collaborator')
           if(client.user.isOwner) roles.push('author')
-          if(client.user.id == owner.user.id) roles.push('owner')
+          if( (client.user.name == owner.user.name) && (client.user.email == owner.user.email) ) roles.push('owner')
             
           console.log(`Roles: ${JSON.stringify(roles)}`)
 
