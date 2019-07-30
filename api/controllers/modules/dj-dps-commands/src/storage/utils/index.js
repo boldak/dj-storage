@@ -56,7 +56,8 @@ module.exports = {
 	}),
 
   access: (client, identity, operation) => new Promise((resolve, reject) => {
-     console.log(`Data access for ${client.user.name} via ${client.app} to ${identity}.${operation}`)
+    
+     console.log(`Data access from ${client.href} for ${client.user.name} via ${client.app} to ${identity}.${operation}`)
 
       Entities
         .findOne({identity:identity})
