@@ -412,7 +412,7 @@ Script.prototype.execute = function(command, state, config) {
             } else {
                 if (o.match(/^\<\?[\s\S]*\?\>$/)) {
                     let r = o.substring(2, o.length - 2);
-                    console.log("scriptable", r)
+                    // console.log("scriptable", r)
 
                     try {
                         // c.moment = require("moment")

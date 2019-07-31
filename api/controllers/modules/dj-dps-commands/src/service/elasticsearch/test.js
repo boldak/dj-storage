@@ -19,20 +19,23 @@ client.ping({
 });
 */
 
-client.search({
-  index: 'kibana_sample_data_flights',
-//  type: 'tweets',
-  body: {
-   query: {
-      match: {
-       Cancelled: true
-      }
-    }
-  }
-}
-).then(response => {
+// client.search({
+//   index: 'kibana_sample_data_flights',
+// //  type: 'tweets',
+//   body: {
+//    query: {
+//       match: {
+//        Cancelled: true
+//       }
+//     }
+//   }
+// }
+client.cat.indices({
+  format:"json"
+})
+.then(response => {
 
-	for (const tweet of response.hits.hits) {
-  console.log('tweet:', tweet);
-}
+	// for (const tweet of response.hits.hits) {
+  console.log('response', JSON.stringify(response));
+// }
 })
