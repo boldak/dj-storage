@@ -13,22 +13,24 @@ class ElasticsearchError extends Error {
 
 
 module.exports = {
-    name: "service.elasticsearch.query",
+    name: "service.elasticsearch",
 
     synonims: {
-        "service.elasticsearch.query": "service.elasticsearch.query",
-        "service.esearch.query": "service.elasticsearch.query",
-        "service.es.query": "service.elasticsearch.query",
+        "service.elasticsearch": "service.elasticsearch",
+        "service.esearch": "service.elasticsearch",
+        "service.es": "service.elasticsearch",
             
     },
 
     "internal aliases":{
-        "query": "query",
-        "q": "query",
-        "where": "query",
-        "filter": "query",
+        "command":"command",
+        "cmd":"command",
+        "params": "params",
+        "args": "params",
+        
         "from": "from",
         "options": "from",
+        
         "map": "map",
         "return":"map",
         "returns":"map"
@@ -37,18 +39,46 @@ module.exports = {
     defaultProperty: {},
 
     execute: function(command, state, config) {
+        console.log(command)
+        command.settings.command = command.settings.command || "ping" 
+        command.settings.command = command.settings.command.trim()
 
-        if(!command.settings.query) throw new ElasticsearchError("empty query detected")
-        if(!command.settings.from) throw new ElasticsearchError("empty options detected")    
-        if(!command.settings.from.host) throw new ElasticsearchError("empty options.host detected")
+        command.settings.params = command.settings.params || {} 
+
+
+
+        // if(!command.settings.from) throw new ElasticsearchError("empty options detected")    
+        // if(!command.settings.from.host) throw new ElasticsearchError("empty options.host detected")
+
+        command.settings.from = command.settings.from || { host : "https://scoaoq6kst:l2emn6tqdl@alder-369811443.eu-west-1.bonsaisearch.net:443"}   
 
         command.settings.map = (command.settings.map) ? command.settings.map : (d => d)
-        if(!_.isFunction(command.settings.map)) throw new ElasticsearchError("map is not function")
+        if(!_.isFunction(command.settings.map)) throw new ElasticsearchError("map is not a function")
 
+        console.log(command.settings.from)    
+        return new Promise( (resolve, reject) => {
 
-        return new Promise( (resolve, reject) => {    
-            (new elasticsearch.Client(command.settings.from))
-                .search(command.settings.query)
+            // let invoker = new elasticsearch.Client(command.settings.from);
+            // try {
+            //     command.settings.command.forEach( c => {
+            //         invoker = invoker[c]
+            //     })    
+            // } catch (e) {
+            //     throw new ElasticsearchError(`command ${command.settings.command.join(".")} not available`) 
+            // }
+            
+            // if(!invoker) throw new ElasticsearchError(`command ${command.settings.command.join(".")} not available`) 
+            // console.log("invoker for ", command.settings.command.join("."), invoker)   
+
+            let options = _.extend({}, command.settings.from)
+
+            let client = new elasticsearch.Client(options);
+            let scriptable = `(() => 
+                client.${command.settings.command}(${JSON.stringify(command.settings.params)})
+            ).apply(this)
+            `
+            console.log(scriptable)
+            eval(scriptable)
                 .then( response => {
                      state.head = {
                             type: "json",

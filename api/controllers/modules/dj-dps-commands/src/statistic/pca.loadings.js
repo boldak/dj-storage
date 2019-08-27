@@ -25,17 +25,16 @@ module.exports = {
 
     execute: function(command, state, config) {
 
-        
-        if(!command.settings.mapper)
-            throw new StatImplError("PCA mapper not defined")
-        
-        let mapper = command.settings.mapper;
-
         let attr_names = [];
 
-        if(!util.isFunction(mapper)){
-            attr_names = (util.isArray( mapper)) ? mapper : [ mapper ]
-            mapper = item => attr_names.map( d => item[d])                
+        if(!command.settings.mapper)
+            command.settings.mapper = _.keys( state.head.data[0]).map( d => d )
+        console.dir(command.settings.mapper)
+            // throw new StatImplError("PCA mapper not defined")
+        
+        if(!util.isFunction(command.settings.mapper)){
+            attr_names = (util.isArray( command.settings.mapper)) ? command.settings.mapper : [ command.settings.mapper ]
+            command.settings.mapper = item => attr_names.map( d => item[d])                
         }
 
         command.settings.named = command.settings.named || "pc"
@@ -46,7 +45,7 @@ module.exports = {
             let res =  
                 pca(
                     s_util.matrix2floats(
-                        state.head.data.map(mapper)
+                        state.head.data.map(command.settings.mapper)
                     )
                 ).loadings
             
