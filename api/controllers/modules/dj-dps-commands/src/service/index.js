@@ -3,5 +3,9 @@ module.exports = [
 	require("./uri/info"),
 	require("./newsapi/google-news"),
 	require("./dict/countries"),
-	require("./elasticsearch/elasticsearch")
+	require("./elasticsearch/elasticsearch"),
+	require("./nlp-uk/token"),
+	require("./nlp-uk/ner"),
+	
+	
 ]
