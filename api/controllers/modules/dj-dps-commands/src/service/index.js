@@ -6,6 +6,8 @@ module.exports = [
 	require("./elasticsearch/elasticsearch"),
 	require("./nlp-uk/token"),
 	require("./nlp-uk/ner"),
-	
-	
+
 ]
+.concat(require("./cypher"))
+.concat(require("./mysql"))
+	

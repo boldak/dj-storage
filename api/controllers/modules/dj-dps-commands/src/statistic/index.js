@@ -23,9 +23,9 @@ module.exports = [
     require("./std"),
     require("./min"),
     require("./max"),
-    require("./regression")
-
+    require("./regression"),
+    require("./agglomerate"),
+    require("./clusterization_")
     
     
-       
 ]

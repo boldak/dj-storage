@@ -167,7 +167,7 @@ function entropy(p) {
   var n = p.length;
   var e = 0.0;
   for (var i = 0; i < n; ++i) {
-    e -= p[i] * Math.log(p[i]);
+    if( p[i] > 0) e -= p[i] * Math.log(p[i],2);
   }
   return e;
 };

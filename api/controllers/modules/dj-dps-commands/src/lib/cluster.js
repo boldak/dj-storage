@@ -331,7 +331,9 @@
     return {'vectors': selected_vectors, 'indices': selected_indices};
   }
 
-  function kmeans(k, vectors) {
+  function kmeans(k, vectors, distance, initialPosition) {
+    console.log(initialPosition)
+
     var n = vectors.length;
     var assignments = new Array(n);
     var clusterSizes = new Array(k);
@@ -339,12 +341,30 @@
     var nb_iters = 0;
     var centroids = null;
 
-    var t = getRandomVectors(k, vectors);
-    if (t == null)
-      return null;
-    else
-      centroids = t.vectors;
+    if( distance ){
+      if( distance == 0 ){
+        distance = euclidianDistance
+      } else if( distance == 1 ) {
+        distance = manhattanDistance
+      } else if ( distance == 2) {
+        distance = maxDistance
+      } else {
+        distance = distance
+      }
+    } else {
+      distance = euclidianDistance
+    }
 
+    if( initialPosition){
+      centroids = initialPosition
+    } else {
+      var t = getRandomVectors(k, vectors);
+      if (t == null)
+        return null;
+      else
+        centroids = t.vectors;
+    }
+    
     while (repeat) {
 
       // assignment step
@@ -391,6 +411,7 @@
           break;
         }
       }
+      
       centroids = newCentroids;
       nb_iters++;
 
@@ -399,11 +420,14 @@
         repeat = false;
 
     }
+    console.log("centroid iteration "+nb_iters)
+    
     return {'centroids': centroids, 'assignments': assignments};
 
   }
 
   function fcmeans(k, vectors, epsilon, fuzziness) {
+    
     var membershipMatrix = new Matrix(vectors.length, k);
     var repeat = true;
     var nb_iters = 0;
@@ -482,6 +506,9 @@
       if (nb_iters > figue.FCMEANS_MAX_ITERATIONS)
         repeat = false;
     }
+
+    console.log("centroid iteration "+nb_iters)
+    
     return {'centroids': centroids, 'membershipMatrix': membershipMatrix};
 
   }

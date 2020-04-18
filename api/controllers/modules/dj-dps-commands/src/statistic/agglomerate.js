@@ -6,32 +6,30 @@ let CLUSTER = require("../lib/cluster").CLUSTER
 
 
 module.exports = {
-    name: "stat.cluster",
+    name: "stat.agglomerate",
 
     synonims: {
-        "stat.cluster": "stat.cluster",
-        "s.cluster": "stat.cluster",
-        "stat.kmeans": "stat.cluster",
-        "s.kmeans": "stat.cluster",
-        "stat.cluster.assignment": "stat.cluster",
-        "s.cluster.assignment": "stat.cluster",
-        "stat.kmeans.assignment": "stat.cluster",
-        "s.kmeans.assignment": "stat.cluster"
-                
+        "stat.agglomerate": "stat.agglomerate",
+        "s.agglomerate": "stat.agglomerate"
     },
 
     "internal aliases":{
+        "data": "data",
         "mapper": "mapper",
         "by": "mapper",
-        "named": "named",
-        "name": "named",
-        "return": "named"
+        "name": "name",
+        "label": "name",
+        "linkage":"linkage",
+        "distance":"distance"
+        
     },
 
     defaultProperty: {},
 
     execute: function(command, state, config) {
 
+        command.settings.data = command.settings.data || state.head.data
+        console.log("data")
         command.settings.mapper  = command.settings.mapper || Object.keys(state.head.data[0]) 
         // if(!command.settings.mapper)
         //     throw new StatImplError("Cluster mapper not defined")
@@ -41,24 +39,26 @@ module.exports = {
             command.settings.mapper = item => attr_names.map( d => item[d])                
         }
 
-        command.settings.named = command.settings.named || "cluster"
-        command.settings.count = command.settings.count || 2    
-
+        command.settings.name = command.settings.name || "name"
+        command.settings.linkage = CLUSTER[command.settings.linkage] || CLUSTER.COMPLETE_LINKAGE    
+        command.settings.distance = CLUSTER[command.settings.distance] || CLUSTER.EUCLIDIAN_DISTANCE    
+        console.log("settings")
         try {
             
             let data = s_util.matrix2floats(
-                state.head.data.map(command.settings.mapper)
+                command.settings.data.map(command.settings.mapper)
             )
-            CLUSTER.KMEANS_MAX_ITERATIONS = command.settings.count * data.length
-            
-            let res = CLUSTER.kmeans(command.settings.count, data).assignments.map( d => d+1 );
+
+            let res = CLUSTER.agglomerate(
+                command.settings.data.map( d => d[command.settings.name]),
+                data,
+                command.settings.distance,
+                command.settings.linkage
+            )
            
             state.head = {
                 type: "json",
-                data: state.head.data.map( ( r, index ) => {
-                    r[ command.settings.named ] = res[ index ]
-                    return r
-                })
+                data: res
             }
 
         } catch (e) {

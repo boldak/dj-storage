@@ -4,16 +4,38 @@ let s_util = require("./utils");
 let StatImplError = require("./staterror");
 let CLUSTER = require("../lib/cluster").CLUSTER
 
+let distance = {
+    EUCLIDIAN_DISTANCE: ( vec1, vec2 ) => {
+        var N = vec1.length;
+        var d = 0;
+        for (var i = 0; i < N; i++)
+          d += Math.pow(vec1[i] - vec2[i], 2)
+        d = Math.sqrt(d);
+        return d;
+    },
+    MANHATTAN_DISTANCE: ( vec1, vec2 ) => {
+        var N = vec1.length;
+        var d = 0;
+        for (var i = 0; i < N; i++)
+          d += Math.abs(vec1[i] - vec2[i])
+        return d;
+    },
+    MAX_DISTANCE: ( vec1, vec2 ) => {
+        var N = vec1.length;
+        var d = 0;
+        for (var i = 0; i < N; i++)
+          d = Math.max(d, Math.abs(vec1[i] - vec2[i]));
+        return d;
+      }
+}
+
 
 module.exports = {
-    name: "stat.centroid",
+    name: "stat.clusterization",
 
     synonims: {
-        "stat.centroid": "stat.centroid",
-        "s.centroid": "stat.centroid",
-        "stat.kmeans.centroid": "stat.centroid",
-        "s.kmeans.centroid": "stat.centroid",
-                
+        "stat.clusterization": "stat.clusterization",
+        "s.clusterization": "stat.clusterization"
     },
 
     "internal aliases":{
@@ -38,29 +60,33 @@ module.exports = {
         }
 
         command.settings.named = command.settings.named || "cluster"
-        command.settings.count = command.settings.count || 2    
+        command.settings.count = command.settings.count || 2  
+        command.settings.distance = command.settings.distance || "EUCLIDIAN_DISTANCE"   
 
         try {
             
             let data = s_util.matrix2floats(
                 state.head.data.map(mapper)
             )
+            
             CLUSTER.KMEANS_MAX_ITERATIONS = command.settings.count * data.length
 
             let temp = []
 
             for(let i = 0; i <= Math.max(500,command.settings.count) / command.settings.count; i++ ){
-
                 temp = temp.concat(
-                    CLUSTER.kmeans(command.settings.count, data).centroids
-               )
+                    CLUSTER.kmeans(command.settings.count, data, CLUSTER[command.settings.distance]).centroids
+                )
             }
 
-            let initialPos = CLUSTER.kmeans(command.settings.count, temp).centroids 
-            let res = CLUSTER.kmeans(command.settings.count, data, initialPos).centroids.map(
+            let initialPos = CLUSTER.kmeans(command.settings.count, temp, CLUSTER[command.settings.distance]).centroids 
+            let cls = CLUSTER.kmeans(command.settings.count, data, CLUSTER[command.settings.distance], initialPos)
+
+            let res = {
+                centroids: cls.centroids.map(
                     (d, index) => {
                         let res = {}
-                        res[command.settings.named] = (index+1);
+                        res[command.settings.named] = index;
                         if(!util.isFunction(command.settings.mapper)){
                             let attr_names = (util.isArray( command.settings.mapper)) ? command.settings.mapper : [ command.settings.mapper ]
                             attr_names.forEach( (a, idx) => {
@@ -71,9 +97,31 @@ module.exports = {
                         }
 
                         return res
-                         
-                    })        
+                    }),
+                data: state.head.data.map( ( r, index ) => {
+                        r[ command.settings.named ] = cls.assignments[ index ]
+                        let _clusters = cls.centroids.map( c => distance[command.settings.distance](c, mapper(r)))
+                        let sum = _.max(_clusters)
+                        clusters = _clusters.map( c => 1 - c / sum)
+                        sum = _.sum(clusters)
+                        clusters = clusters.map( c => c / sum)
+                        let p = 1
+                        clusters.forEach( (c, ci) => {
+                            p *= (cls.assignments[ index ] == ci) ? c : 1-c
+                        })
+                        p*=command.settings.count
+                        r.fuzzy = {
+                            value: ( p>1 ) ? 1 : p,
+                            entropy: STAT.entropy([clusters[cls.assignments[ index ]], 1-clusters[cls.assignments[ index ]]]),
+                            clusters,
+                            distance: _clusters
+                        }
 
+                        return r
+                    })
+            }
+
+            
             state.head = {
                 type: "json",
                 data: res
