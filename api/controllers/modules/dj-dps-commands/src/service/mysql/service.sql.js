@@ -13,6 +13,10 @@ class SqlImplError extends Error {
 }
 
 
+const lineCommentRE = /(-- [\w\S\ .\t\:\,;\'\"\(\)\{\}\[\]0-9-_]*)(?:[\n\r]*)/gi;
+const inlineCommentRE = /(\/\*[\w\W\b\.\t\:\,;\'\"\(\)\{\}\[\]\*0-9-_]*)(?:\*\/)/gim;
+
+
 module.exports = {
     name: "service.sql",
 
@@ -44,11 +48,13 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
             const connection = mysql.createConnection(connectionUrl)
+            command.settings.query = command.settings.query.replace(lineCommentRE,"").replace(inlineCommentRE,"")
+            console.log(command.settings.query)
             command.settings.query = command.settings.query.split(";").map(q => q.trim()).filter(q => q)
             
             let p = command.settings.query.map( q => {
                 let statement = q.split(/\s/)[0].toUpperCase()
-                console.log(statement, " ", command.settings.permission.join(", "),)
+                // console.log(statement, " ", command.settings.permission.join(", "),)
                 if(!_.find(command.settings.permission, p => p == statement))
                 return new SqlImplError(`No permission for execute ${statement} \n ${q}\n`)
             }).filter( p => p)
