@@ -49,11 +49,19 @@ module.exports = {
                     uri: command.settings.url,
                     method: "POST",
                     headers:{
-                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
-                        "Authorization": "Basic YXBwODM3NzAxNjctb3gxWnFhOmIuQjRRbzByWjZpRW1hLm9lTEM0R0xmNGNmelVZUkw=",
-                        "Sec-Fetch-Site": "cross-site",
+                        // "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
+                        // "Authorization": "Basic YXBwODM3NzAxNjctb3gxWnFhOmIuQjRRbzByWjZpRW1hLm9lTEM0R0xmNGNmelVZUkw=",
+                        // "Sec-Fetch-Site": "cross-site",
+                        // "Sec-Fetch-Mode": "cors",
+                        // "Cookie": "_ga=GA1.2.1756611434.1587206549; _gid=GA1.2.1279647713.1587206549; ajs_user_id=null; ajs_group_id=null; ajs_anonymous_id=%22c6069a6d-ecce-4bfb-908b-40a067964ee1%22; _cio=c3d23b3e-42bc-1254-af35-8947e0280ea2; _graphenedb_token=b.UHBSiM5qLt2G.tTERefXDWFQHwZ8l"
+                        
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36",
+                        "Authorization": "Basic YXBwODM3NzAxNjctU2hVMEkyOmIucklRN01EcWxDR1BHLlVpWUVpdEp0NVAxR2JwVzM=",
+                        "Sec-Fetch-Site": "none",
                         "Sec-Fetch-Mode": "cors",
-                        "Cookie": "_ga=GA1.2.1756611434.1587206549; _gid=GA1.2.1279647713.1587206549; ajs_user_id=null; ajs_group_id=null; ajs_anonymous_id=%22c6069a6d-ecce-4bfb-908b-40a067964ee1%22; _cio=c3d23b3e-42bc-1254-af35-8947e0280ea2; _graphenedb_token=b.UHBSiM5qLt2G.tTERefXDWFQHwZ8l"
+                        "Sec-Fetch-Dest": "empty",
+                        "Cookie": "_ga=GA1.2.1756611434.1587206549; ajs_user_id=null; ajs_group_id=null; ajs_anonymous_id=%22c6069a6d-ecce-4bfb-908b-40a067964ee1%22; _gid=GA1.2.1215143817.1587454556; _cio=8c5c3d2d-08a0-2eb7-d30c-c2c04d713438; _graphenedb_token=b.GdfL8KLVTAHe.IC7OrhC2gxCXLDTp0"
+
                     },
                     body: {
                         query: command.settings.query
