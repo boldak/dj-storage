@@ -47,7 +47,7 @@ let getSelection = (object, selector) => {
 						((_.isArray(path[idx]) 
 							? !_.isUndefined(_.find(path[idx], i => i == part)) 
 							: path[idx] == part))) 
-			if(_.isArray(path[idx])) console.log(`FIND "${part}" in `,path[idx],` -> `, _.find(path[idx], i => i == part))
+			// if(_.isArray(path[idx])) console.log(`FIND "${part}" in `,path[idx],` -> `, _.find(path[idx], i => i == part))
 		})
 		return res	
 	})
