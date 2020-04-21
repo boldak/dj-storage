@@ -11,7 +11,8 @@ class CypherImplError extends Error {
 }
 
 
-// const GRAPHENEDB_URL = "https://app83770167-ShU0I2:b.rIQ7MDqlCGPG.UiYEitJt5P1GbpW3@hobby-nlhgecabchbdgbkegbhaepel.dbs.graphenedb.com:24780"
+const GRAPHENEDB_URL = null;
+// "https://app83770167-ShU0I2:b.rIQ7MDqlCGPG.UiYEitJt5P1GbpW3@hobby-nlhgecabchbdgbkegbhaepel.dbs.graphenedb.com:24780"
 const headers = {
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36",
                         "Authorization": "Basic YXBwODM3NzAxNjctU2hVMEkyOmIucklRN01EcWxDR1BHLlVpWUVpdEp0NVAxR2JwVzM=",
