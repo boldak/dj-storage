@@ -49,7 +49,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             const connection = mysql.createConnection(connectionUrl)
             command.settings.query = command.settings.query.replace(lineCommentRE,"").replace(inlineCommentRE,"")
-            console.log(command.settings.query)
+            // console.log(command.settings.query)
             command.settings.query = command.settings.query.split(";").map(q => q.trim()).filter(q => q)
             
             let p = command.settings.query.map( q => {

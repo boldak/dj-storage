@@ -43,7 +43,7 @@ class ParserUtils {
 
           let postProcess;
           key = key.replace(
-              /(?:\?)(javascript|json|text|html|dps|xml|csv|dot|cypher|neo4j|sql)/,
+              /(?:\?)(javascript|json|text|html|dps|xml|csv|dot|cypher|neo4j|sql|uml|plantuml)/,
                   m => {
                       postProcess = m.substring(1);
 

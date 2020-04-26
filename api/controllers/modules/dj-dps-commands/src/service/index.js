@@ -10,4 +10,5 @@ module.exports = [
 ]
 .concat(require("./cypher"))
 .concat(require("./mysql"))
+.concat(require("./plantuml"))
 	
