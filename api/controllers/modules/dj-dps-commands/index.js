@@ -30,6 +30,8 @@ module.exports =
         .concat(require("./src/timeline"))
         .concat(require("./src/bbn"))
         .concat(require("./src/service"))
+        .concat(require("./src/markdown"))
+        
         
 console.log("SUPPORTED COMMANDS")
 console.log(module.exports.map(item => item.name).join("\r\n"))

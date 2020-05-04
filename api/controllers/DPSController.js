@@ -28,10 +28,11 @@ module.exports = {
                 
                 // console.log("SCRIPT", req.body.script)
 
-                script = JSON.parse(JSON.stringify(req.body.script));
+                // script = JSON.parse(JSON.stringify(req.body.script));
+                script = JSON.parse(decodeURIComponent(req.body.script));
                 
                 // console.log("STATE", req.body.state)
-                if(!req.body.state=="undefined") state =  JSON.parse(req.body.state)
+                if(!req.body.state=="undefined") state =  JSON.parse(decodeURIComponent(req.body.state))
                 
                 // console.log("LOCALE", req.body.locale)
                 
@@ -58,9 +59,20 @@ module.exports = {
                 // console.log("FILE CONTENT ", state.storage.$file)
             
             } else {
+                // console.log("req.body.script", req.body.script)
+                // console.log("-----------------------------------------------")
+                // console.log(decodeURIComponent(req.body.script))
+                // console.log("-----------------------------------------------")
+                
+                script = JSON.parse(decodeURIComponent(req.body.script));
+                // console.log("Run script", script)
 
-                script = req.body.script;
-                state = req.body.state;
+                // console.log("req.body.state", req.body.state)
+                // console.log("-----------------------------------------------")
+                // console.log(decodeURIComponent(req.body.state))
+                // console.log("-----------------------------------------------")
+                
+                state = JSON.parse(decodeURIComponent(req.body.state));
                 locale = req.body.locale || "en";
                 host = req.host+":"+req.port;
                 locale = (locale == "uk") ? "ua" : locale;
@@ -74,8 +86,11 @@ module.exports = {
             
             // console.log("host", host)
             // console.log("script", script)
-            // console.log("state", state)
-
+            
+            // console.log("-----------------------------------------------")
+            // console.log("state", JSON.stringify(state))
+            // console.log("-----------------------------------------------")
+            
 
             // console.log(req.host, script, state)
             var executable = new Script()
