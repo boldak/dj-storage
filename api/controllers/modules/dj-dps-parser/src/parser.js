@@ -10,6 +10,10 @@ const ErrorMapper = require('./utils/errorMapper');
 const valuesRE = /'((?:\\\\[\'bfnrt/\\\\]|\\\\u[a-fA-F0-9]{4}|[^\'\\\\])*)'|\"((?:\\\\[\"bfnrt/\\\\]|\\\\u[a-fA-F0-9]{4}|[^\"\\\\])*)\"/gim;
 
 const lineRE = /[\r\n\t\s]*/gim;
+// const lineRE = /[\n\t]+[\s]*/gim;
+
+// const specSymbols = /\\([rtsSwWbBdD"'n])/g
+const specSymbols = /\\([\w\S])/g
 
 const lineCommentRE = /\/\/[\w\S\ .\t\:\,;\'\"\(\)\{\}\[\]0-9-_]*(?:[\n\r]*)/gi;
 const inlineCommentRE = /\/\*[\w\W\b\.\t\:\,;\'\"\(\)\{\}\[\]\*0-9-_]*(?:\*\/)/gim;
@@ -63,6 +67,12 @@ class ScriptParser {
         const self = this;
 
         let p = str
+            .replace(specSymbols, "\\\\$1")
+        // console.log("______________________________")
+        // console.log(p)
+        // console.log("______________________________")
+            
+        p = p
             .replace(scriptRE, ParserUtils.varIndex)
             .replace(urlRE, ParserUtils.pushUrl)
           

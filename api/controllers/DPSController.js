@@ -85,7 +85,7 @@ module.exports = {
             }
             
             // console.log("host", host)
-            // console.log("script", script)
+            // console.log("script", JSON.stringify(script))
             
             // console.log("-----------------------------------------------")
             // console.log("state", JSON.stringify(state))
