@@ -30,7 +30,7 @@
     "connect-mongo": "^2.0.0",
     "copy-object": "^1.0.0",
     "csvjson": "^4.0.0",
-    "date-and-time": "^0.3.0",
+    "date-and-time": "^0.14.2",
     "del": "^3.0.0",
     "ejs": "2.3.1",
     "elasticsearch": "^16.3.0",
