@@ -50,7 +50,7 @@
     "match-words": "^1.0.0",
     "mime": "^1.3.4",
     "minimatch": "^3.0.3",
-    "moment": "^2.23.0",
+    "moment": "^2.29.4",
     "multilang-sentiment": "^1.2.0",
     "mysql2": "^2.1.0",
     "natural": "^0.6.3",
