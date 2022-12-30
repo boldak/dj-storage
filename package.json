@@ -43,7 +43,7 @@
     "i18n-iso-countries": "^4.1.0",
     "iconv-lite": "^0.4.13",
     "jsbayes": "^0.1.0",
-    "json2csv": "^3.7.2",
+    "json2csv": "^5.0.7",
     "jsonpath": "^0.2.9",
     "lodash-node": "^3.10.2",
     "marky-markdown": "^12.0.0",
